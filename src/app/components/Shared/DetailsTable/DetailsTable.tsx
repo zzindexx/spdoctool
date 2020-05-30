@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Link } from "react-router-dom";
-import { IBasicEntity } from '../../../../types/state/IAppState';
+import { BasicEntity } from '../../../../types/state/BasicEntity';
 import { Card } from '../Card/Card';
 import { ErrorBoundary } from '../ErrorBoundary/ErrorBoundary';
 
@@ -107,7 +107,7 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableProps, IDeta
                     <tbody>
                         {this.props.columns.length > 0 && pageItems.length > 0 && pageItems.map((item: any) => {
                             return (
-                                <tr key={item.id ?? item[this.props.columns[0].name]}>
+                                <tr key={item.id}>
                                     {this.props.columns.filter((col: ITableColumn) => col.show).map((col: ITableColumn) => {
                                         const itemValue = item[col.name];
 
@@ -138,8 +138,8 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableProps, IDeta
                                                 else if (Array.isArray(itemValue) && itemValue.length > 0) {
                                                     if (itemValue[0].id && itemValue[0].name) {
                                                         displayValue = <React.Fragment>
-                                                            {!col.isLink && (itemValue as Array<IBasicEntity>).map((s: IBasicEntity) => <div key={s.id} className="row">{s.name}</div>)}
-                                                            {col.isLink && (itemValue as Array<IBasicEntity>).map((s: IBasicEntity) => <div key={s.id} className="row"><div className="col"><Link to={`${col.linkPath}/${s.id}`}>{s.name}</Link></div></div>)}
+                                                            {!col.isLink && (itemValue as Array<BasicEntity>).map((s: BasicEntity) => <div key={s.id} className="row">{s.name}</div>)}
+                                                            {col.isLink && (itemValue as Array<BasicEntity>).map((s: BasicEntity) => <div key={s.id} className="row"><div className="col"><Link to={`${col.linkPath}/${s.id}`}>{s.name}</Link></div></div>)}
                                                         </React.Fragment>;
                                                     } else {
                                                         displayValue = <React.Fragment>

@@ -2,12 +2,12 @@ import * as React from 'react';
 import { PageHeader } from '../PageHeader/PageHeader';
 import { Card } from '../Card/Card';
 import { SummaryTable, ITableRow } from '../SummaryTable/SummaryTable';
-import { IBasicEntity } from '../../../../types/state/IAppState';
+import { BasicEntity } from '../../../../types/state/BasicEntity';
 import { Link } from 'react-router-dom';
 import { ErrorBoundary } from '../ErrorBoundary/ErrorBoundary';
 
 interface IObjectDetailsProps {
-    object: IBasicEntity;
+    object: BasicEntity;
     title: string;
     backLinkTitle: string;
     backLinkUrl: string;

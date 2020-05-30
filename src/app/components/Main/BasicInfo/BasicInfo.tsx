@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { PageHeader } from '../../Shared/PageHeader/PageHeader';
-import { IFarmConfig, ISPServer, ISPConfig } from '../../../../types/state/IAppState';
+import { IFarmConfig, ISPConfig } from '../../../../types/state/IAppState';
 import { Link } from "react-router-dom";
 import { Card } from '../../Shared/Card/Card';
 import { ServersCompact } from '../Servers/Servers';

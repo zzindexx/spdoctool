@@ -1,14 +1,19 @@
 import * as React from 'react';
-import { ISPConfig, IApplicationPool, IServiceAccount, IFarmSolution, IContentDatabase, ISiteCollection } from '../../../../types/state/IAppState';
+import { ISPConfig } from '../../../../types/state/IAppState';
 import { CardList } from '../../Shared/CardList/CardList';
 import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 import { Card } from '../../Shared/Card/Card';
 import { DetailsTable } from '../../Shared/DetailsTable/DetailsTable';
 import { BrowserRouter as Router, Switch, Route, useRouteMatch, useParams } from "react-router-dom";
 import { SummaryTable } from '../../Shared/SummaryTable/SummaryTable';
-import { IWebApplication } from '../../../../types/state/IWebApplication';
+import { WebApplication, WebApplicationViewModel } from '../../../../types/state/WebApplication';
 import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
+import { ContentDatabase } from '../../../../types/state/ContentDatabase';
+import { FarmSolution } from '../../../../types/state/FarmSolution';
+import { ApplicationPool } from '../../../../types/state/ApplicationPool';
+import { ServiceAccount } from '../../../../types/state/ServiceAccount';
+import { SiteCollection } from '../../../../types/state/SiteCollection';
 
 export const WebApplicationsCompact = (props: ISPConfig) => {
     return <CardList title="Web applications" headerLink="/webapplications" collection={props.webApplications} />;
@@ -45,9 +50,9 @@ const WebApplicationsTable = (props: ISPConfig) => {
         }
     ];
 
-    const collection: any[] = props.webApplications.map((webApplication: IWebApplication) => {
-        const contentDatabases: string[] = props.contentDatabases.filter((cd: IContentDatabase) => cd.webApplicationId === webApplication.id).map((cd: IContentDatabase) => cd.id);
-        const siteColNum: number = props.siteCollections.filter((sc: ISiteCollection) => contentDatabases.includes(sc.contentDatabaseId)).length;
+    const collection: any[] = props.webApplications.map((webApplication: WebApplication) => {
+        const contentDatabases: string[] = props.contentDatabases.filter((cd: ContentDatabase) => cd.webApplicationId === webApplication.id).map((cd: ContentDatabase) => cd.id);
+        const siteColNum: number = props.siteCollections.filter((sc: SiteCollection) => contentDatabases.includes(sc.contentDatabaseId)).length;
         return {
             id: webApplication.id,
             name: webApplication.name,
@@ -65,20 +70,7 @@ const WebApplicationsTable = (props: ISPConfig) => {
 
 const WebApplicationDetails = (props: ISPConfig) => {
     let { webAppId } = useParams();
-    const webApp: IWebApplication = props.webApplications.find((wa: IWebApplication) => wa.id === webAppId);
-    const applicationPool: IApplicationPool = props.webApplicationPools.find((wap: IApplicationPool) => wap.id === webApp.applicationPoolId);
-    const applicationPoolAccount: IServiceAccount = props.managedAccounts.find((sa: IServiceAccount) => sa.id === applicationPool.accountId);
-
-    const webAppViewModel = {
-        id: webApp.id,
-        name: webApp.name,
-        url: null, //webApp.url,
-        ssl: null, //.ssl,
-        appPool: applicationPool,
-        appPoolAccount: applicationPoolAccount
-    }
-
-    const webAppContentDatabasesIds: string[] = props.contentDatabases.filter((cd: IContentDatabase) => cd.webApplicationId === webAppId).map((cd: IContentDatabase) => cd.id);
+    const webApp: WebApplicationViewModel = props.webApplications.find((wa: WebApplication) => wa.id === webAppId).getViewModel(props);
 
     const aamColumns = [
         {
@@ -101,18 +93,11 @@ const WebApplicationDetails = (props: ISPConfig) => {
         }
     ];
 
-    const siteCollections = props.siteCollections.filter((sc: ISiteCollection) => webAppContentDatabasesIds.includes(sc.contentDatabaseId)).map((sc: ISiteCollection) => ({
-        id: sc.id,
-        name: sc.name,
-        url: sc.url,
-        size: sc.size < 1073741824 ? `${(sc.size / 1024 / 1024).toFixed(2)} Mb` : `${(sc.size / 1024 / 1024 / 1024).toFixed(2)} Gb`
-    }));
-
 
     return (
         <React.Fragment>
             <ObjectDetails
-                object={webAppViewModel}
+                object={webApp}
                 backLinkTitle="List of web application"
                 backLinkUrl="/webapplications"
                 title="Web application"
@@ -120,9 +105,8 @@ const WebApplicationDetails = (props: ISPConfig) => {
                     { rowTitle: 'Web application Id', rowProperty: 'id' },
                     { rowTitle: 'Web application name', rowProperty: 'name' },
                     { rowTitle: 'Url', rowProperty: 'url' },
-                    { rowTitle: 'Uses SSL?', rowProperty: 'ssl' },
-                    { rowTitle: 'Application pool', rowProperty: 'appPool', linkUrl: "/applicationpools/{id}" },
-                    { rowTitle: 'Application pool account', rowProperty: 'appPoolAccount', linkUrl: '/managedaccounts/{id}' }
+                    { rowTitle: 'Application pool', rowProperty: 'applicationPool', linkUrl: "/applicationpools/{id}" },
+                    { rowTitle: 'Application pool account', rowProperty: 'applicationPoolAccount', linkUrl: '/managedaccounts/{id}' }
                 ]}
             />
             <div className="row">
@@ -154,18 +138,18 @@ const WebApplicationDetails = (props: ISPConfig) => {
                             { name: 'authentication', title: 'Authentication', show: true, isLink: false }
                         ]} />
 
-                        <CardList title="Farm solutions" itemLink='/farmsolutions' collection={props.farmSolutions.filter((fs: IFarmSolution) => fs.deployedWebApplicationIds.includes(webAppId))} idField="id" displayField="name" />
+                        <CardList title="Farm solutions" itemLink='/farmsolutions' collection={webApp.farmSolutions} />
 
-                        <DetailsTable title="Content databases" collection={props.contentDatabases.filter((cd: IContentDatabase) => cd.webApplicationId === webAppId).map((cd: IContentDatabase) => ({ id: cd.id, name: cd.name, server: cd.server, size: (cd.size / 1024 / 1024 / 1024).toFixed(2) }))} columns={[
+                        <DetailsTable title="Content databases" collection={webApp.contentDatabases} columns={[
                             { name: 'name', title: 'Name', show: true, isLink: true, linkPath: '/contentdatabases' },
                             { name: 'server', title: 'Database server', show: true, isLink: false },
-                            { name: 'size', title: 'Current size in Gb', show: true, isLink: false }
+                            { name: 'sizeString', title: 'Current size in Gb', show: true, isLink: false }
                         ]} />
 
-                        <DetailsTable title="Site collections" collection={siteCollections} columns={[
+                        <DetailsTable title="Site collections" collection={webApp.siteCollections} columns={[
                             { name: 'name', title: 'Site collection title', show: false, isLink: false },
                             { name: 'url', title: 'Url', show: true, isLink: true, linkPath: '/sitecollections' },
-                            { name: 'size', title: 'Size', show: true, isLink: false }
+                            { name: 'sizeString', title: 'Size', show: true, isLink: false }
                         ]} />
                     </div>
                 </div>

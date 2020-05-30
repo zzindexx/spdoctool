@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { IServiceApplication, ISPConfig, IServiceAccount, IApplicationPool } from '../../../../types/state/IAppState';
+import { ISPConfig } from '../../../../types/state/IAppState';
 import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 import { CardList } from '../../Shared/CardList/CardList';
 import { DetailsTable, ITableColumn } from '../../Shared/DetailsTable/DetailsTable';
 import { BrowserRouter as Router, Switch, Route, useRouteMatch, useParams } from "react-router-dom";
 import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
+import { ApplicationPool } from '../../../../types/state/ApplicationPool';
+import { ServiceApplication, ServiceApplicationViewModel } from '../../../../types/state/ServiceApplication';
 
 export const ServiceApplicationsCompact = (props: ISPConfig) => {
     return <CardList title="Service applications" headerLink="/serviceapplications" collection={props.serviceApplications} />;
@@ -51,9 +53,7 @@ export const ServiceApplicationsTable = (props: ISPConfig) => {
         }
     ];
 
-    const collection: any[] = props.serviceApplications.map((serviceApplication: IServiceApplication) => {
-        const applicationPool: IApplicationPool = props.serviceApplicationPools.find((sap: IApplicationPool) => sap.id === serviceApplication.applicationPoolId)
-
+    const collection: any[] = props.serviceApplications.map((serviceApplication: ServiceApplication) => {
         return {
             id: serviceApplication.id,
             name: serviceApplication.name,
@@ -70,16 +70,7 @@ export const ServiceApplicationsTable = (props: ISPConfig) => {
 
 export const ServiceApplicationsDetails = (props: ISPConfig) => {
     let { serviceApplicationId } = useParams();
-    const serviceApplication: IServiceApplication = props.serviceApplications.find((sa: IServiceApplication) => sa.id === serviceApplicationId);
-
-    const serviceApplicationViewModel = {
-        id: serviceApplication.id,
-        name: serviceApplication.name,
-        typeName: serviceApplication.typeName,
-        applicationPool: props.serviceApplicationPools.find((sap: IApplicationPool) => sap.id === serviceApplication.applicationPoolId),
-        databaseName: serviceApplication.databaseName,
-        databaseServer: serviceApplication.databaseServer
-    };
+    const serviceApplication: ServiceApplicationViewModel = props.serviceApplications.find((sa: ServiceApplication) => sa.id === serviceApplicationId).getViewModel(props);
 
     return (
         <React.Fragment>
@@ -87,7 +78,7 @@ export const ServiceApplicationsDetails = (props: ISPConfig) => {
                 title='Service application'
                 backLinkTitle='List of service applications'
                 backLinkUrl='/serviceapplications'
-                object={serviceApplicationViewModel}
+                object={serviceApplication}
                 rows={[
                     { rowProperty: 'name', rowTitle: 'Service application name' },
                     { rowProperty: 'typeName', rowTitle: 'Service application type' },

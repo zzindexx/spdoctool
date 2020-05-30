@@ -23,11 +23,22 @@ import { ContentDatabases } from './components/Main/ContentDatabases/ContentData
 import { SiteCollections } from './components/Main/SiteCollections/SiteCollections';
 import { About } from './components/About/About';
 import { UploadConfigDialog } from './components/UploadConfig/UploadConfig';
-import { PageHeader } from './components/Shared/PageHeader/PageHeader';
 import { FAQ } from './components/FAQ/FAQ';
 import { ProxyGroups } from './components/Main/ProxyGroups/ProxyGroups';
 import TelemetryProvider from './TelemetryProvider';
 import { getAppInsights } from './TelemetryService';
+import { ContentDatabase } from '../types/state/ContentDatabase';
+import { SQLServer } from '../types/state/SQLServer';
+import { FarmSolution } from '../types/state/FarmSolution';
+import { ServiceAccount } from '../types/state/ServiceAccount';
+import { SPServer } from '../types/state/SPServer';
+import { ApplicationPool } from '../types/state/ApplicationPool';
+import { ServiceApplicationProxy } from '../types/state/ServiceApplicationProxy';
+import { ServiceApplicationProxyGroup } from '../types/state/ServiceApplicationProxyGroup';
+import { ServiceApplication } from '../types/state/ServiceApplication';
+import { ServiceInstance } from '../types/state/ServiceInstance';
+import { SiteCollection } from '../types/state/SiteCollection';
+import { WebApplication } from '../types/state/WebApplication';
 
 
 export class App extends React.PureComponent<{}, IAppState> {
@@ -43,11 +54,33 @@ export class App extends React.PureComponent<{}, IAppState> {
         if (fileInput) {
             fileInput.files[0].text().then((contents: string) => {
                 const parsedConfig: any = JSON.parse(contents);
-                this.setState({
+                /*this.setState({
                     configurationUploaded: true,
                     farmConfig: parsedConfig.farmConfig,
                     spConfig: parsedConfig.spConfig,
                     sqlConfig: parsedConfig.sqlConfig
+                });*/
+
+                this.setState({
+                    configurationUploaded: true,
+                    farmConfig: parsedConfig.farmConfig,
+                    sqlConfig: {
+                        servers: parsedConfig.sqlConfig.servers.map((s: any) => new SQLServer(s))
+                    },
+                    spConfig: {
+                        farmSolutions: parsedConfig.spConfig.farmSolutions.map((parsedJson: any) => new FarmSolution(parsedJson)),
+                        managedAccounts: parsedConfig.spConfig.managedAccounts.map((parsedJson: any) => new ServiceAccount(parsedJson)),
+                        servers: parsedConfig.spConfig.servers.map((parsedJson: any) => new SPServer(parsedJson)),
+                        serviceApplicationPools: parsedConfig.spConfig.serviceApplicationPools.map((parsedJson: any) => new ApplicationPool(parsedJson)),
+                        serviceApplicationProxies: parsedConfig.spConfig.serviceApplicationProxies.map((parsedJson: any) => new ServiceApplicationProxy(parsedJson)),
+                        serviceApplicationProxyGroups: parsedConfig.spConfig.serviceApplicationProxyGroups.map((parsedJson: any) => new ServiceApplicationProxyGroup(parsedJson)),
+                        serviceApplications: parsedConfig.spConfig.serviceApplications.map((parsedJson: any) => new ServiceApplication(parsedJson)),
+                        serviceInstances: parsedConfig.spConfig.serviceInstances.map((parsedJson: any) => new ServiceInstance(parsedJson)),
+                        siteCollections: parsedConfig.spConfig.siteCollections.map((parsedJson: any) => new SiteCollection(parsedJson)),
+                        webApplicationPools: parsedConfig.spConfig.webApplicationPools.map((parsedJson: any) => new ApplicationPool(parsedJson)),
+                        webApplications: parsedConfig.spConfig.webApplications.map((parsedJson: any) => new WebApplication(parsedJson)),
+                        contentDatabases: parsedConfig.spConfig.contentDatabases.map((cd: any) => new ContentDatabase(cd))
+                    }
                 });
 
                 localStorage.removeItem('spdoctool-farm');
@@ -55,9 +88,9 @@ export class App extends React.PureComponent<{}, IAppState> {
                 localStorage.removeItem('spdoctool-sql');
 
                 if (keepData) {
-                    localStorage.setItem('spdoctool-farm', JSON.stringify(parsedConfig.farmConfig));
-                    localStorage.setItem('spdoctool-sp', JSON.stringify(parsedConfig.spConfig));
-                    localStorage.setItem('spdoctool-sql', JSON.stringify(parsedConfig.sqlConfig));
+                    //localStorage.setItem('spdoctool-farm', JSON.stringify(parsedConfig.farmConfig));
+                    //localStorage.setItem('spdoctool-sp', JSON.stringify(parsedConfig.spConfig));
+                    //localStorage.setItem('spdoctool-sql', JSON.stringify(parsedConfig.sqlConfig));
                 }
             });
         }

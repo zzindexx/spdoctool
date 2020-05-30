@@ -1,12 +1,12 @@
 import * as React from 'react';
 import { PageHeader } from '../../Shared/PageHeader/PageHeader';
-import { ISQLConfig, ISQLServer } from '../../../../types/state/IAppState';
-import { Card } from '../../Shared/Card/Card';
+import { ISQLConfig } from '../../../../types/state/IAppState';
 import { DetailsTable } from '../../Shared/DetailsTable/DetailsTable';
-import { BrowserRouter as Router, Switch, Route, useRouteMatch, useParams } from "react-router-dom";
+import { Switch, Route, useRouteMatch, useParams } from "react-router-dom";
 import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
 import { CardList } from '../../Shared/CardList/CardList';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
+import { SQLServer } from '../../../../types/state/SQLServer';
 
 export const SQLServers = (props: ISQLConfig) => {
     let match = useRouteMatch();
@@ -41,7 +41,7 @@ export const SQLServersTable = (props: ISQLConfig) => {
 
 export const SQLConfigDetails = (props: ISQLConfig) => {
     let { sqlServerId } = useParams();
-    const sqlServer: ISQLServer = props.servers.find((sql) => sql.id === sqlServerId);
+    const sqlServer: SQLServer = props.servers.find((sql) => sql.id === sqlServerId);
     return (
         <React.Fragment>
             <ObjectDetails

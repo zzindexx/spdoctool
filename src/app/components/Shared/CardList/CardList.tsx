@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { IBasicEntity } from '../../../../types/state/IAppState';
+import { BasicEntity } from '../../../../types/state/BasicEntity';
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
 import { ErrorBoundary } from '../ErrorBoundary/ErrorBoundary';
@@ -7,9 +7,7 @@ import { ErrorBoundary } from '../ErrorBoundary/ErrorBoundary';
 interface ICardListProps {
     title: string;
     headerLink?: string;
-    collection: IBasicEntity[] | any[];
-    idField?: string;
-    displayField?: string;
+    collection: BasicEntity[];
     itemLink?: string;
 }
 
@@ -55,23 +53,14 @@ class CardListInternal extends React.PureComponent<ICardListProps, ICardListStat
         if (this.props.collection.length === 0)
             return null;
 
-        const pageItems: any[] = this.props.collection.slice((this.state.currentPage - 1) * this.pageSize, (this.pageSize * this.state.currentPage));
-
-        let { idField, displayField } = this.props;
+        const pageItems: BasicEntity[] = this.props.collection.sort().slice((this.state.currentPage - 1) * this.pageSize, (this.pageSize * this.state.currentPage));
         let items: JSX.Element[];
-        if (idField && displayField) {
-            items = (pageItems as any[]).map((item: IBasicEntity) => (
-                <li key={item[idField]} className="list-group-item">
-                    {this.props.itemLink ? <Link to={`${this.props.itemLink}/${item[idField]}`}>{item[displayField]}</Link> : item[displayField]}
-                </li>
-            ));
-        } else {
-            items = (pageItems as IBasicEntity[]).map((item: IBasicEntity) => (
-                <li key={item.id} className="list-group-item">
-                    {this.props.itemLink ? <Link to={`${this.props.itemLink}/${item.id}`}>{item.name}</Link> : item.name}
-                </li>
-            ));
-        }
+
+        items = pageItems.map((item: BasicEntity) => (
+            <li key={item.id} className="list-group-item">
+                {this.props.itemLink ? <Link to={`${this.props.itemLink}/${item.id}`}>{item.name}</Link> : item.name}
+            </li>
+        ));
 
         const pagination: JSX.Element = this.state.totalPages === 1 ? null : <React.Fragment>
             <div className="d-flex justify-content-center mt-3">

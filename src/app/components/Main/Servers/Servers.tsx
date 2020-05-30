@@ -1,11 +1,13 @@
 import * as React from 'react';
-import { ISPConfig, ISPServer, IServiceInstance } from '../../../../types/state/IAppState';
+import { ISPConfig } from '../../../../types/state/IAppState';
 import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 import { CardList } from '../../Shared/CardList/CardList';
 import { DetailsTable, ITableColumn } from '../../Shared/DetailsTable/DetailsTable';
 import { Switch, Route, Link, useRouteMatch, useParams } from "react-router-dom";
 import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
+import { SPServer } from '../../../../types/state/SPServer';
+import { ServiceInstance } from '../../../../types/state/ServiceInstance';
 
 
 export const Servers = (props: ISPConfig) => {
@@ -20,7 +22,6 @@ export const Servers = (props: ISPConfig) => {
                 <ErrorBoundary>
                     <ServersTable {...props} />
                 </ErrorBoundary>
-
             </Route>
         </Switch>
     );
@@ -62,13 +63,7 @@ export const ServersTable = (props: ISPConfig) => {
 
 export const ServersDetails = (props: ISPConfig) => {
     const { serverId } = useParams();
-    const server: ISPServer = props.servers.find((srv: ISPServer) => srv.id === serverId);
-
-    const serverViewModel = {
-        id: server.id,
-        name: server.name,
-        ipaddresses: server.ipaddresses
-    }
+    const server: SPServer = props.servers.find((srv: SPServer) => srv.id === serverId);
 
     return <React.Fragment>
         <ObjectDetails
@@ -83,7 +78,7 @@ export const ServersDetails = (props: ISPConfig) => {
             ]} />
         <div className="row">
             <div className="col">
-                <CardList title="Service instances" idField="id" displayField="name" collection={props.serviceInstances.filter((si: IServiceInstance) => si.serversIds.includes(serverId))} />
+                <CardList title="Service instances" collection={props.serviceInstances.filter((si: ServiceInstance) => si.serversIds.includes(serverId))} />
             </div>
         </div>
     </React.Fragment>;

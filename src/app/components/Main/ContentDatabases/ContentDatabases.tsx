@@ -1,34 +1,28 @@
 import * as React from 'react';
-import { ISPConfig, IContentDatabase, ISiteCollection } from '../../../../types/state/IAppState';
+import { ISPConfig } from '../../../../types/state/IAppState';
 import { CardList } from '../../Shared/CardList/CardList';
 import { BrowserRouter as Router, Switch, Route, useRouteMatch, useParams } from "react-router-dom";
 import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 import { DetailsTable } from '../../Shared/DetailsTable/DetailsTable';
-import { IWebApplication } from '../../../../types/state/IWebApplication';
+import { WebApplication } from '../../../../types/state/WebApplication';
 import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
+import { ContentDatabase, ContentDatabaseViewModel } from '../../../../types/state/ContentDatabase';
+import { SiteCollection } from '../../../../types/state/SiteCollection';
 
 export const ContentDatabasesCompact = (props: ISPConfig) => {
-    return <CardList title="Content databases" headerLink="/contentdatabases" collection={props.contentDatabases} idField="id" displayField="name" />;
+    return <CardList title="Content databases" headerLink="/contentdatabases" collection={props.contentDatabases} />;
 }
 
 export const ContentDatabasesTable = (props: ISPConfig) => {
-    const contentDatabasesViewModel: any[] = props.contentDatabases.map((cd: IContentDatabase) => {
-        return {
-            id: cd.id,
-            name: cd.name,
-            size: (cd.size / 1024 / 1024 / 1024).toFixed(2),
-            siteCollectionCount: props.siteCollections.filter((sc: ISiteCollection) => sc.contentDatabaseId === cd.id).length,
-            webapp: props.webApplications.find((wa: IWebApplication) => wa.id === cd.webApplicationId)
-        }
-    });
+    const contentDatabasesViewModel: ContentDatabaseViewModel[] = props.contentDatabases.map((cd: ContentDatabase) => cd.getViewModel(props));
     return (
         <React.Fragment>
             <DetailsTable title="List of content databases" collection={contentDatabasesViewModel} columns={[
                 { name: 'id', title: 'Id', show: false, isLink: false },
                 { name: 'name', title: 'Database name', show: true, isLink: true, linkPath: "/contentdatabases" },
-                { name: 'webapp', title: 'Web application', show: true, isLink: true, linkPath: '/webapplications' },
-                { name: 'size', title: 'Size in Gb', show: true, isLink: false },
+                { name: 'webApplication', title: 'Web application', show: true, isLink: true, linkPath: '/webapplications' },
+                { name: 'sizeString', title: 'Size', show: true, isLink: false },
                 { name: 'siteCollectionCount', title: 'Number of site collections', show: true, isLink: false }
             ]} />
         </React.Fragment>
@@ -37,25 +31,7 @@ export const ContentDatabasesTable = (props: ISPConfig) => {
 
 export const ContentDatabasesDetails = (props: ISPConfig) => {
     const { contentDatabaseId } = useParams();
-    const contentDatabase: IContentDatabase = props.contentDatabases.find((cd: IContentDatabase) => cd.id === contentDatabaseId);
-
-    const contentDatabaseViewModel: any = {
-        id: contentDatabase.id,
-        name: contentDatabase.name,
-        size: (contentDatabase.size / 1024 / 1024 / 1024).toFixed(2),
-        server: contentDatabase.server,
-        webapp: props.webApplications.find((wa: IWebApplication) => wa.id === contentDatabase.webApplicationId),
-        numberOfSites: props.siteCollections.filter((sc: ISiteCollection) => sc.contentDatabaseId === contentDatabaseId).length
-    }
-
-    const siteCollections = props.siteCollections.filter((sc: ISiteCollection) => sc.contentDatabaseId === contentDatabaseId).map((sc: ISiteCollection) => {
-        return {
-            id: sc.id,
-            name: sc.name,
-            size: sc.size < 1073741824 ? `${(sc.size / 1024 / 1024).toFixed(2)} Mb` : `${(sc.size / 1024 / 1024 / 1024).toFixed(2)} Gb`,
-            url: sc.url
-        }
-    });
+    const contentDatabaseViewModel: ContentDatabaseViewModel = props.contentDatabases.find((cd: ContentDatabase) => cd.id === contentDatabaseId).getViewModel(props);
 
     return <React.Fragment>
         <ObjectDetails
@@ -66,17 +42,17 @@ export const ContentDatabasesDetails = (props: ISPConfig) => {
             rows={[
                 { rowTitle: 'Id', rowProperty: 'id' },
                 { rowTitle: 'Content databse name', rowProperty: 'name' },
-                { rowTitle: 'Web application', rowProperty: 'webapp', linkUrl: '/webapplications/{id}' },
-                { rowTitle: 'Size in Gb', rowProperty: 'size' },
+                { rowTitle: 'Web application', rowProperty: 'webApplication', linkUrl: '/webapplications/{id}' },
+                { rowTitle: 'Size in Gb', rowProperty: 'sizeString' },
                 { rowTitle: 'Number of site collections', rowProperty: 'numberOfSites' }
             ]} />
         <div className="row">
             <div className="col">
-                <DetailsTable title="Site collections in database" collection={siteCollections} columns={[
+                <DetailsTable title="Site collections in database" collection={contentDatabaseViewModel.siteCollections} columns={[
                     { name: 'id', title: '', show: false, isLink: false },
                     { name: 'name', title: '', show: false, isLink: false },
                     { name: 'url', title: 'URL', show: true, isLink: true, linkPath: '/sitecollections' },
-                    { name: 'size', title: 'Size in Gb', show: true, isLink: false }
+                    { name: 'sizeString', title: 'Size', show: true, isLink: false }
                 ]} />
             </div>
         </div>

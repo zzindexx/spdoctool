@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { ISPConfig, IFarmSolution, IBasicEntity } from '../../../../types/state/IAppState';
+import { ISPConfig } from '../../../../types/state/IAppState';
 import { CardList } from '../../Shared/CardList/CardList';
 import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 import { Card } from '../../Shared/Card/Card';
 import { DetailsTable, ITableColumn } from '../../Shared/DetailsTable/DetailsTable';
-import { IWebApplication } from '../../../../types/state/IWebApplication';
+import { WebApplication } from '../../../../types/state/WebApplication';
 import { BrowserRouter as Router, Switch, Route, Link, useRouteMatch, useParams } from "react-router-dom";
 import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
+import { FarmSolution, FarmSolutionViewModel } from '../../../../types/state/FarmSolution';
+import { BasicEntity } from '../../../../types/state/BasicEntity';
 
 export const FarmSolutions = (props: ISPConfig) => {
     let match = useRouteMatch();
@@ -60,16 +62,7 @@ export const FarmSolutionsTable = (props: ISPConfig) => {
         }
 
     ];
-    const collection: any[] = props.farmSolutions.map((fs: IFarmSolution) => {
-        const webapps: IBasicEntity[] = props.webApplications.filter((wa: IWebApplication) => fs.deployedWebApplicationIds.includes(wa.id)).map((wa: IWebApplication) => ({ id: wa.id, name: wa.name }));
-        return {
-            id: fs.id,
-            name: fs.name,
-            deployed: fs.deployed,
-            globallydeployed: fs.globallydeployed,
-            deployedWebApplications: webapps
-        };
-    });
+    const collection: FarmSolutionViewModel[] = props.farmSolutions.map((fs: FarmSolution) => fs.getViewModel(props));
 
     return (
         <React.Fragment>
@@ -80,7 +73,7 @@ export const FarmSolutionsTable = (props: ISPConfig) => {
 
 export const FarmSolutionsDetails = (props: ISPConfig) => {
     const { farmSoulutionId } = useParams();
-    const farmSolution: IFarmSolution = props.farmSolutions.find((fs: IFarmSolution) => fs.id === farmSoulutionId);
+    const farmSolution: FarmSolutionViewModel = props.farmSolutions.find((fs: FarmSolution) => fs.id === farmSoulutionId).getViewModel(props);
 
     return <React.Fragment>
         <ObjectDetails
@@ -98,7 +91,7 @@ export const FarmSolutionsDetails = (props: ISPConfig) => {
             ]} />
         <div className="row">
             <div className="col">
-                <CardList title="Deployed to web applications" itemLink="/webapplications" collection={props.webApplications.filter((wa: IWebApplication) => farmSolution.deployedWebApplicationIds.includes(wa.id))} idField="id" displayField="name" />
+                <CardList title="Deployed to web applications" itemLink="/webapplications" collection={farmSolution.deployedWebApplications}/>
             </div>
         </div>
     </React.Fragment>;

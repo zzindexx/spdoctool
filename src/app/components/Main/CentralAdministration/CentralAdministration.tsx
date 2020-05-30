@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { PageHeader } from '../../Shared/PageHeader/PageHeader';
-import { IFarmConfig, ISPConfig, IApplicationPool, IBasicEntity } from '../../../../types/state/IAppState';
+import { IFarmConfig, ISPConfig } from '../../../../types/state/IAppState';
 import { SummaryTable } from '../../Shared/SummaryTable/SummaryTable';
 import { CardList } from '../../Shared/CardList/CardList';
 import { DetailsTable } from '../../Shared/DetailsTable/DetailsTable';
+import { BasicEntity } from '../../../../types/state/BasicEntity';
+import { ApplicationPool } from '../../../../types/state/ApplicationPool';
 
 interface ICentralAdministrationProps {
     farmConfig: IFarmConfig;
@@ -13,10 +15,10 @@ interface ICentralAdministrationProps {
 export const CentralAdministration = (props: ICentralAdministrationProps) => {
     const centralAdminViewModel = {
         url: props.farmConfig.centralAdmin.url,
-        applicationPool: props.spConfig.webApplicationPools.find((ap: IApplicationPool) => ap.id === props.farmConfig.centralAdmin.applicationPoolId)
+        applicationPool: props.spConfig.webApplicationPools.find((ap: ApplicationPool) => ap.id === props.farmConfig.centralAdmin.applicationPoolId)
     };
 
-    const languagePacksViewModel: IBasicEntity[] = props.farmConfig.languagePacks.map((lang: string) => ({ id: lang, name: lang }));
+    const languagePacksViewModel: BasicEntity[] = props.farmConfig.languagePacks.map((lang: string) => ({ id: lang, name: lang }));
 
     return (
         <React.Fragment>
