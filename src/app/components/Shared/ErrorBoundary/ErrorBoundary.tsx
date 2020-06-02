@@ -1,5 +1,5 @@
 import * as React from 'react';
-
+import { Card } from '../Card/Card';
 interface IErrorBoundaryState {
     hasError: boolean;
 }

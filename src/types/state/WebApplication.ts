@@ -5,7 +5,6 @@ import { ContentDatabase, ContentDatabaseViewModel } from "./ContentDatabase";
 import { ApplicationPool, ApplicationPoolViewModel } from "./ApplicationPool";
 import { ServiceAccount } from "./ServiceAccount";
 import { ServiceApplicationProxyGroup } from "./ServiceApplicationProxyGroup";
-import { DisplayName } from "../Decorators";
 import { FarmSolution } from "./FarmSolution";
 
 export class WebApplication extends BasicEntity {

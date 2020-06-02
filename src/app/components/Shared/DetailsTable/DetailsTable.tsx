@@ -66,7 +66,7 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableProps, IDeta
 
     render() {
         const pageItems: any[] = this.props.collection.slice((this.state.currentPage - 1) * this.state.pageSize, (this.state.pageSize * this.state.currentPage));
-        const pagination: JSX.Element = this.props.collection.length <= 25 ? null : <React.Fragment>
+        const pagination: JSX.Element = this.state.totalPages === 1 ? null : <React.Fragment>
             <div className="d-flex justify-content-center mt-3">
                 <nav>
                     <ul className="pagination pagination-sm flex-wrap justify-content-center">

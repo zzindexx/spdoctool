@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { BasicEntity } from '../../../../types/state/BasicEntity';
+import { BasicEntity, IBasicEntity } from '../../../../types/state/BasicEntity';
 import { Card } from '../Card/Card';
 import { Link } from 'react-router-dom';
 import { ErrorBoundary } from '../ErrorBoundary/ErrorBoundary';
@@ -11,23 +11,73 @@ interface ICardListProps {
     itemLink?: string;
 }
 
+interface ICardListInternalProps {
+    collection: BasicEntity[];
+    itemLink?: string;
+    sortOrder: 'asc' | 'desc';
+}
+
 interface ICardListState {
+    sortOrder: 'asc' | 'desc';
+}
+
+interface ICardListInternalState {
     currentPage: number;
     totalPages: number;
 }
 
-export const CardList = (props: ICardListProps) => {
-    return <Card title={props.title} headerLink={props.headerLink ? props.headerLink : undefined}>
-        <ErrorBoundary>
-            <CardListInternal {...props} />
-        </ErrorBoundary>
-    </Card>
+
+export class CardList extends React.PureComponent<ICardListProps, ICardListState> {
+    constructor(props: ICardListProps) {
+        super(props);
+        this.state = {
+            sortOrder: 'asc'
+        }
+    }
+
+    setSort = (order: 'asc' | 'desc') => {
+        this.setState({
+            sortOrder: order
+        });
+    }
+
+    render() {
+        let sortOrder: JSX.Element = null;
+        if (typeof (this.props.collection) !== undefined && Array.isArray(this.props.collection) && this.props.collection.length > 1) {
+            sortOrder = <React.Fragment>
+                <div className="">
+                    <div className="form-group" style={{marginBottom: 0}}>
+                        <div className="btn-group btn-group-sm" role="group" aria-label="Sort order">
+                            <button type="button" onClick={(e) => { e.preventDefault(); this.setSort('asc'); }} className={`btn ${this.state.sortOrder === 'asc' ? "btn-secondary" : "btn-outline-secondary"} btn-sm`}><i className="fas fa-arrow-up"></i></button>
+                            <button type="button" onClick={(e) => { e.preventDefault(); this.setSort('desc'); }} className={`btn ${this.state.sortOrder === 'desc' ? "btn-secondary" : "btn-outline-secondary"} btn-sm`}><i className="fas fa-arrow-down"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </React.Fragment>
+        }
+        return <div className="card">
+            {this.props.title.length > 0 && <div className="card-header-tab card-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                
+                    <div>
+                        {this.props.title}
+                    </div>
+                    {sortOrder}
+            </div>}
+            <div className="card-body">
+                <ErrorBoundary>
+                    <CardListInternal {...this.props} sortOrder={this.state.sortOrder} />
+                </ErrorBoundary>
+            </div>
+
+        </div>;
+    }
+
 }
 
-class CardListInternal extends React.PureComponent<ICardListProps, ICardListState> {
+class CardListInternal extends React.PureComponent<ICardListInternalProps, ICardListInternalState> {
     pageSize: number = 15;
 
-    constructor(props: ICardListProps) {
+    constructor(props: ICardListInternalProps) {
         super(props);
 
         this.state = {
@@ -49,11 +99,20 @@ class CardListInternal extends React.PureComponent<ICardListProps, ICardListStat
         });
     }
 
+
+
     render() {
         if (this.props.collection.length === 0)
             return null;
 
-        const pageItems: BasicEntity[] = this.props.collection.sort().slice((this.state.currentPage - 1) * this.pageSize, (this.pageSize * this.state.currentPage));
+        const pageItems: BasicEntity[] = this.props.collection.sort((a: IBasicEntity, b: IBasicEntity) => {
+            if (this.props.sortOrder === 'asc') {
+                return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1;
+            }
+            else {
+                return a.name.toLowerCase() > b.name.toLowerCase() ? -1 : 1;
+            }
+        }).slice((this.state.currentPage - 1) * this.pageSize, (this.pageSize * this.state.currentPage));
         let items: JSX.Element[];
 
         items = pageItems.map((item: BasicEntity) => (

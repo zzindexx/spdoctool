@@ -1,4 +1,4 @@
-export abstract class BasicEntity {
+export abstract class BasicEntity implements IBasicEntity {
     id: string;
     name: string;
 
@@ -6,4 +6,9 @@ export abstract class BasicEntity {
         this.id = props.id;
         this.name = props.name;
     }
+}
+
+export interface IBasicEntity {
+    id: string;
+    name: string;
 }

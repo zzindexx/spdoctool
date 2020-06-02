@@ -40,10 +40,6 @@ export const SummaryTable = (props: ISummaryTableProps) => {
                         let rowValue: JSX.Element;
                         let displayName: string;
 
-                        //TODO: no ckeck for name field
-
-
-
                         switch (typeof (propValue)) {
                             case 'string':
                                 displayName = propValue;

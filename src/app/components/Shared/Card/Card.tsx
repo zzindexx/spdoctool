@@ -19,14 +19,14 @@ export const Card = (props: ICardProps) => {
             <div className="card-body">
                 {props.children}
             </div>
-            
+
         </div>
     );
 }
 
 //<div className="card-body">
 //<h5 className="card-title"></h5>
-                
+
 //</div>
 //<div className="btn-actions-pane-right text-capitalize">
 //<button className="btn-wide btn-outline-2x mr-md-2 btn btn-outline-focus btn-sm">View All</button>
