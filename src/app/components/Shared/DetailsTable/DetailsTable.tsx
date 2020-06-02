@@ -16,6 +16,7 @@ interface IDetailsTableProps {
     title: string;
     collection: any[];
     columns: ITableColumn[];
+    headerLink?: string;
 }
 interface IDetailsTableIntenralProps {
     title: string;
@@ -102,7 +103,7 @@ export class DetailsTable extends React.PureComponent<IDetailsTableProps, IDetai
         return <div className="card">
             {this.props.title.length > 0 && <div className="card-header-tab card-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
                 <div>
-                    {this.props.title}
+                    {this.props.headerLink ? <Link to={this.props.headerLink}>{this.props.title}</Link> : this.props.title}
                 </div>
                 <div className="btn-group">
                     {pageSizeSelector}
