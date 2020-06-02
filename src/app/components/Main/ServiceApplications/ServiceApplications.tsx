@@ -33,23 +33,15 @@ export const ServiceApplications = (props: ISPConfig) => {
 export const ServiceApplicationsTable = (props: ISPConfig) => {
     const columns: ITableColumn[] = [
         {
-            name: 'id',
-            title: 'Id',
-            isLink: false,
-            show: false
-        },
-        {
             name: 'name',
             title: 'Service application name',
-            isLink: true,
-            show: true,
-            linkPath: '/serviceapplications'
+            linkPath: '/serviceapplications',
+            sortable: true
         },
         {
             name: 'type',
             title: 'Service application type',
-            isLink: false,
-            show: true
+            sortable: true
         }
     ];
 
@@ -84,7 +76,7 @@ export const ServiceApplicationsDetails = (props: ISPConfig) => {
                     { rowProperty: 'typeName', rowTitle: 'Service application type' },
                     { rowProperty: 'applicationPool', rowTitle: 'Application pool', linkUrl: '/applicationpools/{id}' },
                     { rowProperty: 'databaseName', rowTitle: 'Database name' },
-                    { rowProperty: 'databaseServer', rowTitle: 'Database server', linkUrl: `/sqlconfig/${serviceApplication.databaseServer}` }
+                    { rowProperty: 'databaseServer', rowTitle: 'Database server' }
                 ]}
             />
             <div className="row">

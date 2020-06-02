@@ -34,10 +34,9 @@ export const ProxyGroupsTable = (props: ISPConfig) => {
 
     return <React.Fragment>
         <DetailsTable title="List of content databases" collection={proxyGroupsViewModel} columns={[
-            { name: 'id', title: 'Id', show: false, isLink: false },
-            { name: 'name', title: 'Proxy group name', show: true, isLink: true, linkPath: '/proxygroups' },
-            { name: 'numberOfProxies', title: 'Number of proxies', show: true, isLink: false },
-            { name: 'webApplications', title: 'Web applications', show: true, isLink: true, linkPath: '/webapplications' }
+            { name: 'name', title: 'Proxy group name', linkPath: '/proxygroups', sortable: true },
+            { name: 'numberOfProxies', title: 'Number of proxies', sortable: true },
+            { name: 'webApplications', title: 'Web applications', linkPath: '/webapplications' }
         ]} />
     </React.Fragment>;
 }
@@ -60,8 +59,8 @@ export const ProxyGroupsDetails = (props: ISPConfig) => {
         <div className="row">
             <div className="col">
                 <DetailsTable title="Service applications in this proxy group" collection={proxyGroup.serviceApplications} columns={[
-                    { name: 'name', title: 'Service Application', show: true, isLink: true, linkPath:'/serviceapplications' },
-                    { name: 'proxyName', title: 'Service Application Proxy', show: true, isLink: false }
+                    { name: 'name', title: 'Service Application', linkPath:'/serviceapplications' },
+                    { name: 'proxyName', title: 'Service Application Proxy' }
                 ]} />
             </div>
         </div>

@@ -34,23 +34,15 @@ export const ServersCompact = (props: ISPConfig) => {
 export const ServersTable = (props: ISPConfig) => {
     const columns: ITableColumn[] = [
         {
-            name: 'id',
-            title: 'Id',
-            isLink: false,
-            show: false
-        },
-        {
             name: 'name',
             title: 'Server name',
-            isLink: true,
-            show: true,
-            linkPath: '/servers'
+            linkPath: '/servers',
+            sortable: true
         },
         {
             name: 'ipaddresses',
             title: 'IP Address',
-            isLink: false,
-            show: true
+            sortable: false
         }
     ];
     return (

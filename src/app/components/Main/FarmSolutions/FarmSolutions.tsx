@@ -37,28 +37,23 @@ export const FarmSolutionsTable = (props: ISPConfig) => {
         {
             name: 'name',
             title: 'Solution name',
-            isLink: true,
             linkPath: '/farmsolutions',
-            show: true
+            sortable: true
         },
         {
-            name: 'deployed',
+            name: 'deployedString',
             title: 'Is deployed',
-            isLink: false,
-            show: true
+            sortable: true
         },
         {
-            name: 'globallydeployed',
+            name: 'globallydeployedString',
             title: 'Globally deployed',
-            isLink: false,
-            show: true
+            sortable: true
         },
         {
             name: 'deployedWebApplications',
             title: 'Deployed to web applications',
-            isLink: true,
-            linkPath: '/webapplications',
-            show: true
+            linkPath: '/webapplications'
         }
 
     ];

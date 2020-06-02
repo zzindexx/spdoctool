@@ -33,8 +33,8 @@ export const CentralAdministration = (props: ICentralAdministrationProps) => {
             />
             <CardList collection={languagePacksViewModel} title="Installed language packs"  />
             <DetailsTable collection={props.farmConfig.centralAdmin.farmAdmins} title="Farm administrators" columns={[
-                { name: 'name', title: 'Display name', isLink: false, show: true},
-                { name: 'userName', title: 'User name', isLink: false, show: true}
+                { name: 'name', title: 'Display name' },
+                { name: 'userName', title: 'User name' }
             ]} />
         </React.Fragment>
     );

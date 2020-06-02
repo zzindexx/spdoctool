@@ -19,11 +19,10 @@ export const ContentDatabasesTable = (props: ISPConfig) => {
     return (
         <React.Fragment>
             <DetailsTable title="List of content databases" collection={contentDatabasesViewModel} columns={[
-                { name: 'id', title: 'Id', show: false, isLink: false },
-                { name: 'name', title: 'Database name', show: true, isLink: true, linkPath: "/contentdatabases" },
-                { name: 'webApplication', title: 'Web application', show: true, isLink: true, linkPath: '/webapplications' },
-                { name: 'sizeString', title: 'Size', show: true, isLink: false },
-                { name: 'siteCollectionCount', title: 'Number of site collections', show: true, isLink: false }
+                { name: 'name', title: 'Database name', linkPath: "/contentdatabases", sortable: true },
+                { name: 'webApplication', title: 'Web application', linkPath: '/webapplications', sortable: true },
+                { name: 'sizeString', title: 'Size', sortable: true, sortPropertyName: 'size' },
+                { name: 'siteCollectionCount', title: 'Number of site collections', sortable: true }
             ]} />
         </React.Fragment>
     );
@@ -49,10 +48,8 @@ export const ContentDatabasesDetails = (props: ISPConfig) => {
         <div className="row">
             <div className="col">
                 <DetailsTable title="Site collections in database" collection={contentDatabaseViewModel.siteCollections} columns={[
-                    { name: 'id', title: '', show: false, isLink: false },
-                    { name: 'name', title: '', show: false, isLink: false },
-                    { name: 'url', title: 'URL', show: true, isLink: true, linkPath: '/sitecollections' },
-                    { name: 'sizeString', title: 'Size', show: true, isLink: false }
+                    { name: 'url', title: 'URL', linkPath: '/sitecollections' },
+                    { name: 'sizeString', title: 'Size' }
                 ]} />
             </div>
         </div>

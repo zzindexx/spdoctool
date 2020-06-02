@@ -43,14 +43,12 @@ export const ApplicationPoolsTable = (props: ISPConfig) => {
     return (
         <React.Fragment>
             <DetailsTable title="Web application pools" collection={webAppPools} columns={[
-                { name: 'id', title: 'Id', show: false, isLink: true },
-                { name: 'name', title: 'Application pool name', show: true, isLink: true, linkPath: '/applicationpools' },
-                { name: 'account', title: 'Service account', show: true, isLink: true, linkPath: '/managedaccounts' }
+                { name: 'name', title: 'Application pool name', linkPath: '/applicationpools', sortable: true },
+                { name: 'account', title: 'Service account', linkPath: '/managedaccounts' }
             ]} />
             <DetailsTable title="Service application pools" collection={saPools} columns={[
-                { name: 'id', title: 'Id', show: false, isLink: true },
-                { name: 'name', title: 'Application pool name', show: true, isLink: true, linkPath: '/applicationpools' },
-                { name: 'account', title: 'Service account', show: true, isLink: true, linkPath: '/managedaccounts' }
+                { name: 'name', title: 'Application pool name', linkPath: '/applicationpools', sortable: true },
+                { name: 'account', title: 'Service account', linkPath: '/managedaccounts' }
             ]} />
         </React.Fragment>
     );

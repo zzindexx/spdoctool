@@ -11,7 +11,6 @@ import {
 } from "react-router-dom";
 import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
-import { ApplicationPool } from '../../../../types/state/ApplicationPool';
 import { ServiceAccount, ServiceAccountViewModel } from '../../../../types/state/ServiceAccount';
 
 export const ManagedAccountsCompact = (props: ISPConfig) => {
@@ -21,9 +20,9 @@ export const ManagedAccountsCompact = (props: ISPConfig) => {
 export const ManagedAccountsTable = (props: ISPConfig) => {
     return (
         <React.Fragment>
-            <DetailsTable title="Managed accounts" collection={props.managedAccounts} columns={[
-                { name: 'name', title: 'Account', show: true, isLink: true, linkPath: '/managedaccounts' },
-                { name: 'autoChangePassword', title: 'Automatically change password?', show: true, isLink: false }
+            <DetailsTable title="Managed accounts" collection={props.managedAccounts.map((ma: ServiceAccount) => ma.getViewModel(props))} columns={[
+                { name: 'name', title: 'Account', linkPath: '/managedaccounts', sortable: true },
+                { name: 'autoChangePasswordString', title: 'Automatically change password?', sortable: true }
             ]} />
         </React.Fragment>
     );

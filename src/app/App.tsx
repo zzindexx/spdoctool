@@ -54,12 +54,6 @@ export class App extends React.PureComponent<{}, IAppState> {
         if (fileInput) {
             fileInput.files[0].text().then((contents: string) => {
                 const parsedConfig: any = JSON.parse(contents);
-                /*this.setState({
-                    configurationUploaded: true,
-                    farmConfig: parsedConfig.farmConfig,
-                    spConfig: parsedConfig.spConfig,
-                    sqlConfig: parsedConfig.sqlConfig
-                });*/
 
                 this.setState({
                     configurationUploaded: true,
@@ -87,10 +81,10 @@ export class App extends React.PureComponent<{}, IAppState> {
                 localStorage.removeItem('spdoctool-sp');
                 localStorage.removeItem('spdoctool-sql');
 
-                if (keepData) {
-                    //localStorage.setItem('spdoctool-farm', JSON.stringify(parsedConfig.farmConfig));
-                    //localStorage.setItem('spdoctool-sp', JSON.stringify(parsedConfig.spConfig));
-                    //localStorage.setItem('spdoctool-sql', JSON.stringify(parsedConfig.sqlConfig));
+                if (keepData) {                    
+                    localStorage.setItem('spdoctool-farm', JSON.stringify(parsedConfig.farmConfig));
+                    localStorage.setItem('spdoctool-sp', JSON.stringify(parsedConfig.spConfig));
+                    localStorage.setItem('spdoctool-sql', JSON.stringify(parsedConfig.sqlConfig));
                 }
             });
         }
@@ -106,13 +100,28 @@ export class App extends React.PureComponent<{}, IAppState> {
         if (localStorage.getItem('spdoctool-sql')) {
             this.setState({
                 configurationUploaded: true,
-                sqlConfig: JSON.parse(localStorage.getItem('spdoctool-sql')),
+                sqlConfig: {
+                    servers: JSON.parse(localStorage.getItem('spdoctool-sql')).servers.map((s: any) => new SQLServer(s))
+                },
             });
         }
         if (localStorage.getItem('spdoctool-sp')) {
             this.setState({
                 configurationUploaded: true,
-                spConfig: JSON.parse(localStorage.getItem('spdoctool-sp')),
+                spConfig: {
+                    farmSolutions: JSON.parse(localStorage.getItem('spdoctool-sp')).farmSolutions.map((parsedJson: any) => new FarmSolution(parsedJson)),
+                    managedAccounts: JSON.parse(localStorage.getItem('spdoctool-sp')).managedAccounts.map((parsedJson: any) => new ServiceAccount(parsedJson)),
+                    servers: JSON.parse(localStorage.getItem('spdoctool-sp')).servers.map((parsedJson: any) => new SPServer(parsedJson)),
+                    serviceApplicationPools: JSON.parse(localStorage.getItem('spdoctool-sp')).serviceApplicationPools.map((parsedJson: any) => new ApplicationPool(parsedJson)),
+                    serviceApplicationProxies: JSON.parse(localStorage.getItem('spdoctool-sp')).serviceApplicationProxies.map((parsedJson: any) => new ServiceApplicationProxy(parsedJson)),
+                    serviceApplicationProxyGroups: JSON.parse(localStorage.getItem('spdoctool-sp')).serviceApplicationProxyGroups.map((parsedJson: any) => new ServiceApplicationProxyGroup(parsedJson)),
+                    serviceApplications: JSON.parse(localStorage.getItem('spdoctool-sp')).serviceApplications.map((parsedJson: any) => new ServiceApplication(parsedJson)),
+                    serviceInstances: JSON.parse(localStorage.getItem('spdoctool-sp')).serviceInstances.map((parsedJson: any) => new ServiceInstance(parsedJson)),
+                    siteCollections: JSON.parse(localStorage.getItem('spdoctool-sp')).siteCollections.map((parsedJson: any) => new SiteCollection(parsedJson)),
+                    webApplicationPools: JSON.parse(localStorage.getItem('spdoctool-sp')).webApplicationPools.map((parsedJson: any) => new ApplicationPool(parsedJson)),
+                    webApplications: JSON.parse(localStorage.getItem('spdoctool-sp')).webApplications.map((parsedJson: any) => new WebApplication(parsedJson)),
+                    contentDatabases: JSON.parse(localStorage.getItem('spdoctool-sp')).contentDatabases.map((cd: any) => new ContentDatabase(cd))
+                }
             });
         }
     }

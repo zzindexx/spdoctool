@@ -2,13 +2,9 @@ import * as React from 'react';
 import { Switch, useRouteMatch, Route, useParams } from 'react-router-dom';
 import { ISPConfig } from '../../../../types/state/IAppState';
 import { PageHeader } from '../../Shared/PageHeader/PageHeader';
-import { ApplicationPoolsDetails, ApplicationPoolsTable } from '../ApplicationPools/ApplicationPools';
-import { Card } from '../../Shared/Card/Card';
 import { DetailsTable } from '../../Shared/DetailsTable/DetailsTable';
 import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
-import { WebApplication } from '../../../../types/state/WebApplication';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
-import { ContentDatabase } from '../../../../types/state/ContentDatabase';
 import { SiteCollection, SiteCollectionViewModel } from '../../../../types/state/SiteCollection';
 
 export const SiteCollections = (props: ISPConfig) => {
@@ -33,11 +29,9 @@ export const SiteCollectionsTable = (props: ISPConfig) => {
     return (
         <React.Fragment>
             <DetailsTable title="Site collections" collection={collection} columns={[
-                { name: 'id', title: '', show: false, isLink: false },
-                { name: 'name', title: '', show: false, isLink: false },
-                { name: 'url', title: 'Url', show: true, isLink: true, linkPath: '/sitecollections' },
-                { name: 'contentDatabase', title: 'Content database', show: true, isLink: true, linkPath: '/contentdatabases' },
-                { name: 'sizeString', title: 'Size', show: true, isLink: false }
+                { name: 'url', title: 'Url',  linkPath: '/sitecollections', sortable: true },
+                { name: 'contentDatabase', title: 'Content database', linkPath: '/contentdatabases', sortable: true },
+                { name: 'sizeString', title: 'Size', sortable: true, sortPropertyName: 'size' }
             ]} />
         </React.Fragment>
     );

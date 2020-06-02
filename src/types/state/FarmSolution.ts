@@ -24,7 +24,9 @@ export class FarmSolution extends BasicEntity {
             id: this.id,
             name: this.name,
             deployed: this.deployed,
+            deployedString: this.globallydeployed ? 'Yes' : 'No',
             globallydeployed: this.globallydeployed,
+            globallydeployedString: this.globallydeployed ? 'Yes' : 'No',
             deployedWebApplications: spConfig.webApplications.filter((wa: WebApplication) => this.deployedWebApplicationIds.includes(wa.id))
         }
     }
@@ -34,6 +36,8 @@ export class FarmSolutionViewModel {
     id: string;
     name: string;
     deployed: boolean;
+    deployedString: string;
     globallydeployed: boolean;
+    globallydeployedString: string;
     deployedWebApplications: WebApplication[];
 }

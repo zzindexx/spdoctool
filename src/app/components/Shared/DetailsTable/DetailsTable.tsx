@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Link } from "react-router-dom";
-import { BasicEntity } from '../../../../types/state/BasicEntity';
+import { BasicEntity, IBasicEntity } from '../../../../types/state/BasicEntity';
 import { Card } from '../Card/Card';
 import { ErrorBoundary } from '../ErrorBoundary/ErrorBoundary';
 
 export interface ITableColumn {
     name: string;
     title: string;
-    isLink: boolean;
     linkPath?: string;
-    show: boolean;
+    sortable?: boolean;
+    sortPropertyName?: string;
 }
 
 interface IDetailsTableProps {
@@ -22,6 +22,8 @@ interface IDetailsTableState {
     currentPage: number;
     totalPages: number;
     pageSize: number;
+    sortColumn: string;
+    sortOrder: 'asc' | 'desc';
 }
 
 export const DetailsTable = (props: IDetailsTableProps) => {
@@ -39,7 +41,9 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableProps, IDeta
         this.state = {
             currentPage: 1,
             totalPages: 1,
-            pageSize: 50
+            pageSize: 50,
+            sortColumn: 'name',
+            sortOrder: 'asc'
         }
     }
 
@@ -64,8 +68,86 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableProps, IDeta
         });
     }
 
+    setSort = (col: ITableColumn) => {
+        if (this.state.sortColumn === col.name || this.state.sortColumn === col.sortPropertyName) {
+            this.setState({
+                sortOrder: this.state.sortOrder === 'asc' ? 'desc' : 'asc'
+            });
+        } else {
+            this.setState({
+                sortColumn: col.sortPropertyName ? col.sortPropertyName : col.name,
+                sortOrder: 'asc'
+            });
+        }
+        
+    }
+
     render() {
-        const pageItems: any[] = this.props.collection.slice((this.state.currentPage - 1) * this.state.pageSize, (this.state.pageSize * this.state.currentPage));
+        if (this.props.collection.length === 0 || this.props.columns.length === 0)
+            return null;
+
+        const pageItems: any[] = this.props.collection.sort((a: any, b: any) => {
+            if (this.state.sortOrder === 'asc') {
+                return a[this.state.sortColumn] > b[this.state.sortColumn] ? 1 : -1;
+            }
+            else {
+                return a[this.state.sortColumn] > b[this.state.sortColumn] ? -1 : 1;
+            }
+        }).slice((this.state.currentPage - 1) * this.state.pageSize, (this.state.pageSize * this.state.currentPage));
+        
+        if (pageItems.length === 0)
+            return null;
+
+
+        const tableHeader: JSX.Element = <tr>
+            {
+                this.props.columns.map((col: ITableColumn) => <th scope="col" key={col.name}>
+                    {col.title}
+                    {
+                        typeof (col.sortable) !== undefined && col.sortable && <span className="ml-3">
+                            {(this.state.sortColumn === col.name || this.state.sortColumn === col.sortPropertyName) && this.state.sortOrder === 'asc' && <a href='#' onClick={(e) => { e.preventDefault(); this.setSort(col) }}><i className="fas fa-sort-alpha-up"></i></a>}
+                            {(this.state.sortColumn === col.name || this.state.sortColumn === col.sortPropertyName) && this.state.sortOrder === 'desc' && <a href='#' onClick={(e) => { e.preventDefault(); this.setSort(col) }}><i className="fas fa-sort-alpha-down"></i></a>}
+                            {(this.state.sortColumn !== col.name && this.state.sortColumn !== col.sortPropertyName) && <a href='#' onClick={(e) => { e.preventDefault(); this.setSort(col) }}><i className="fas fa-sort-alpha-up text-secondary"></i></a>}
+                        </span>
+                    }
+                </th>)
+            }
+        </tr>;
+
+        const itemRows: JSX.Element[] = pageItems.map((item: any) => {
+            const itemCells: JSX.Element[] = this.props.columns.map((col: ITableColumn) => {
+                const itemCellValue = item[col.name];
+                let itemCellValueElement: JSX.Element = null;
+
+                if (typeof (itemCellValue) !== undefined && itemCellValue !== null) {
+                    switch (typeof (itemCellValue)) {
+                        case 'string':
+                        case 'number':
+                            itemCellValueElement = col.linkPath ? <Link to={`${col.linkPath}/${item.id}`}>{itemCellValue.toString()}</Link> : <React.Fragment>{itemCellValue.toString()}</React.Fragment>;
+                            break;
+                        case 'boolean':
+                            itemCellValueElement = col.linkPath ? <Link to={`${col.linkPath}/${item.id}`}>{itemCellValue.toString()}</Link> : <React.Fragment>{itemCellValue.toString()}</React.Fragment>;
+                            break;
+                        case 'object':
+                            if (Array.isArray(itemCellValue)) {
+                                itemCellValueElement = <React.Fragment>
+                                    {(itemCellValue as Array<any>).length > 0 && (itemCellValue as Array<any>).map((v: any) => <div key={v} className="row"><div className="col">{v}</div></div>)}
+                                </React.Fragment>;
+                            } else {
+                                itemCellValueElement = col.linkPath ? <Link to={`${col.linkPath}/${itemCellValue.id}`}>{itemCellValue.name}</Link> : <React.Fragment>{itemCellValue.name}</React.Fragment>;
+                            }
+                            break;
+                    }
+                }
+                return <td key={`item${item.id}-${col.name}`}>
+                    {itemCellValueElement}
+                </td>
+            })
+            return <tr key={item.id}>
+                {itemCells}
+            </tr>
+        });
+
         const pagination: JSX.Element = this.state.totalPages === 1 ? null : <React.Fragment>
             <div className="d-flex justify-content-center mt-3">
                 <nav>
@@ -80,6 +162,7 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableProps, IDeta
                 </nav>
             </div>
         </React.Fragment>;
+
         const pageSizeSelection: JSX.Element = this.props.collection.length <= 25 ? null : <React.Fragment>
             <div className="d-flex justify-content-end">
                 <div className="form-group">
@@ -98,83 +181,14 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableProps, IDeta
         return (
             <React.Fragment>
                 {pageSizeSelection}
-                < table className="table" >
+                <table className="table" >
                     <thead>
-                        <tr>
-                            {this.props.columns.length > 0 && this.props.columns.filter((col: ITableColumn) => col.show).map((col: ITableColumn) => <th scope="col" key={col.name}>{col.title}</th>)}
-                        </tr>
+                        {tableHeader}
                     </thead>
                     <tbody>
-                        {this.props.columns.length > 0 && pageItems.length > 0 && pageItems.map((item: any) => {
-                            return (
-                                <tr key={item.id}>
-                                    {this.props.columns.filter((col: ITableColumn) => col.show).map((col: ITableColumn) => {
-                                        const itemValue = item[col.name];
-
-                                        if (typeof itemValue === undefined)
-                                            return null;
-
-                                        let displayValue: JSX.Element = <React.Fragment></React.Fragment>;
-                                        switch (typeof (itemValue)) {
-                                            case 'string':
-                                            case 'number':
-                                                if (col.isLink) {
-                                                    displayValue = <Link to={`${col.linkPath}/${item.id}`}>{itemValue.toString()}</Link>
-                                                } else {
-                                                    displayValue = <React.Fragment>{itemValue.toString()}</React.Fragment>
-                                                }
-                                                break;
-                                            case 'boolean':
-                                                if (col.isLink) {
-                                                    displayValue = <Link to={`${col.linkPath}/${item.id}`}>{itemValue ? 'Yes' : 'No'}</Link>
-                                                } else {
-                                                    displayValue = <React.Fragment>{itemValue ? 'Yes' : 'No'}</React.Fragment>
-                                                }
-                                                break;
-                                            case 'object':
-                                                if (itemValue === null) {
-                                                    displayValue = <React.Fragment></React.Fragment>;
-                                                }
-                                                else if (Array.isArray(itemValue) && itemValue.length > 0) {
-                                                    if (itemValue[0].id && itemValue[0].name) {
-                                                        displayValue = <React.Fragment>
-                                                            {!col.isLink && (itemValue as Array<BasicEntity>).map((s: BasicEntity) => <div key={s.id} className="row">{s.name}</div>)}
-                                                            {col.isLink && (itemValue as Array<BasicEntity>).map((s: BasicEntity) => <div key={s.id} className="row"><div className="col"><Link to={`${col.linkPath}/${s.id}`}>{s.name}</Link></div></div>)}
-                                                        </React.Fragment>;
-                                                    } else {
-                                                        displayValue = <React.Fragment>
-                                                            {!col.isLink && (itemValue as Array<any>).map((s: any) => <div key={s} className="row">{s}</div>)}
-                                                            {col.isLink && (itemValue as Array<any>).map((s: any) => <div key={s} className="row"><div className="col"><Link to={`${col.linkPath}/${s}`}>{s}</Link></div></div>)}
-                                                        </React.Fragment>
-                                                    }
-                                                } else {
-                                                    //TODO os IBasicEntity
-                                                    if (Object.keys(itemValue).includes('name')) {
-                                                        if (col.isLink && Object.keys(itemValue).includes('id')) {
-                                                            displayValue = <Link to={`${col.linkPath}/${itemValue.id}`}>{itemValue.name}</Link>;
-                                                        } else {
-                                                            displayValue = <React.Fragment>{itemValue.name}</React.Fragment>
-                                                        }
-
-                                                    } else {
-                                                        displayValue = <React.Fragment>{itemValue}</React.Fragment>
-                                                    }
-                                                }
-                                                break;
-                                            default:
-                                                displayValue = <React.Fragment>{itemValue}</React.Fragment>;
-                                                break
-                                        }
-
-                                        return <td key={`${item.id ?? item[this.props.columns[0].name]}-${col.name}`}>
-                                            {displayValue}
-                                        </td>;
-                                    })}
-                                </tr>
-                            );
-                        })}
+                        {itemRows}
                     </tbody>
-                </table >
+                </table>
                 {pagination}
             </React.Fragment >
         );
