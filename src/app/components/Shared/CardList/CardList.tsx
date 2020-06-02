@@ -45,23 +45,27 @@ export class CardList extends React.PureComponent<ICardListProps, ICardListState
         let sortOrder: JSX.Element = null;
         if (typeof (this.props.collection) !== undefined && Array.isArray(this.props.collection) && this.props.collection.length > 1) {
             sortOrder = <React.Fragment>
-                <div className="">
-                    <div className="form-group" style={{marginBottom: 0}}>
-                        <div className="btn-group btn-group-sm" role="group" aria-label="Sort order">
-                            <button type="button" onClick={(e) => { e.preventDefault(); this.setSort('asc'); }} className={`btn ${this.state.sortOrder === 'asc' ? "btn-secondary" : "btn-outline-secondary"} btn-sm`}><i className="fas fa-arrow-up"></i></button>
-                            <button type="button" onClick={(e) => { e.preventDefault(); this.setSort('desc'); }} className={`btn ${this.state.sortOrder === 'desc' ? "btn-secondary" : "btn-outline-secondary"} btn-sm`}><i className="fas fa-arrow-down"></i></button>
-                        </div>
+                <div className="dropdown">
+                    <button className="btn btn-light dropdown-toggle btn-sm" type="button" id="sortDropDownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i className="fas fa-align-right mr-1">
+                        </i>
+                        Sorting
+                    </button>
+                    <div className="dropdown-menu dropdown-menu-right" aria-labelledby="sortDropDownMenu">
+                        <button className={`dropdown-item ${this.state.sortOrder === 'asc' ? 'active' : ''}`} type="button" onClick={(e) => this.setSort('asc')}>Ascending</button>
+                        <button className={`dropdown-item ${this.state.sortOrder === 'desc' ? 'active' : ''}`} type="button" onClick={(e) => this.setSort('desc')}>Descending</button>
+
                     </div>
                 </div>
             </React.Fragment>
         }
         return <div className="card">
             {this.props.title.length > 0 && <div className="card-header-tab card-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
-                
-                    <div>
-                        {this.props.title}
-                    </div>
-                    {sortOrder}
+
+                <div>
+                    {this.props.title}
+                </div>
+                {sortOrder}
             </div>}
             <div className="card-body">
                 <ErrorBoundary>

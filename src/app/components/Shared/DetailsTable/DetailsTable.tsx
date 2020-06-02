@@ -23,18 +23,19 @@ interface IDetailsTableIntenralProps {
     columns: ITableColumn[];
     sortColumn: string;
     sortOrder: 'asc' | 'desc';
+    pageSize: number;
 
 }
 
 interface IDetailsTableState {
     sortColumn: string;
     sortOrder: 'asc' | 'desc';
+    pageSize: number;
 }
 
 interface IDetailsTableInternalState {
     currentPage: number;
     totalPages: number;
-    pageSize: number;
 }
 
 export class DetailsTable extends React.PureComponent<IDetailsTableProps, IDetailsTableState> {
@@ -43,7 +44,8 @@ export class DetailsTable extends React.PureComponent<IDetailsTableProps, IDetai
 
         this.state = {
             sortColumn: 'name',
-            sortOrder: 'asc'
+            sortOrder: 'asc',
+            pageSize: 50
         }
     }
 
@@ -54,33 +56,62 @@ export class DetailsTable extends React.PureComponent<IDetailsTableProps, IDetai
         });
     }
 
+    setPageSize = (size: number) => {
+        this.setState({
+            pageSize: size
+        });
+    }
+
     render() {
+        const pageSizeSelector: JSX.Element = this.props.collection.length <= 25 ? null : <React.Fragment>
+            <div className="dropdown">
+                <button className="btn btn-light dropdown-toggle btn-sm" type="button" id="pageSizeDropDownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i className="fas fa-align-right mr-1">
+                    </i>
+                            Page Size
+                    </button>
+                <div className="dropdown-menu dropdown-menu-right" aria-labelledby="pageSizeDropDownMenu">
+
+                    <button className={`dropdown-item ${this.state.pageSize === 25 ? 'active' : ''}`} type="button" onClick={(e) => this.setPageSize(25)}>25</button>
+                    <button className={`dropdown-item ${this.state.pageSize === 50 ? 'active' : ''}`} type="button" onClick={(e) => this.setPageSize(50)}>50</button>
+                    <button className={`dropdown-item ${this.state.pageSize === 100 ? 'active' : ''}`} type="button" onClick={(e) => this.setPageSize(100)}>100</button>
+                    <button className={`dropdown-item ${this.state.pageSize === 250 ? 'active' : ''}`} type="button" onClick={(e) => this.setPageSize(250)}>250</button>
+                </div>
+            </div>
+        </React.Fragment>;
+
+        const sortingSelector: JSX.Element = this.props.columns.filter((col: ITableColumn) => col.sortable).length === 0 ? null : <React.Fragment>
+            <div className="dropdown ml-1">
+                <button className="btn btn-light dropdown-toggle btn-sm" type="button" id="sortDropDownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i className="fas fa-align-right mr-1">
+                    </i>
+                        Sorting
+                    </button>
+                <div className="dropdown-menu dropdown-menu-right" aria-labelledby="sortDropDownMenu">
+                    {this.props.columns.filter((col: ITableColumn) => col.sortable).map((col: ITableColumn) => {
+                        const sortColumnName: string = col.sortPropertyName ? col.sortPropertyName : col.name;
+                        return <React.Fragment key={col.title}>
+                            <button className={`dropdown-item ${this.state.sortColumn === sortColumnName && this.state.sortOrder === 'asc' ? 'active' : ''}`} type="button" onClick={(e) => this.setSort(sortColumnName, 'asc')}>Ascending: {col.title}</button>
+                            <button className={`dropdown-item ${this.state.sortColumn === sortColumnName && this.state.sortOrder === 'desc' ? 'active' : ''}`} type="button" onClick={(e) => this.setSort(sortColumnName, 'desc')}>Descending: {col.title}</button>
+                        </React.Fragment>;
+                    })}
+                </div>
+            </div>
+        </React.Fragment>;
+
         return <div className="card">
             {this.props.title.length > 0 && <div className="card-header-tab card-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
                 <div>
                     {this.props.title}
                 </div>
-                <div className="dropdown">
-                    <button className="btn btn-light dropdown-toggle btn-sm" type="button" id="sortDropDownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i className="fas fa-align-right mr-1">
-                        </i>
-                        Sorting
-                    </button>
-                    <div className="dropdown-menu dropdown-menu-right" aria-labelledby="sortDropDownMenu">
-                        {this.props.columns.filter((col: ITableColumn) => col.sortable).map((col: ITableColumn) => {
-                            const sortColumnName: string = col.sortPropertyName ? col.sortPropertyName : col.name;
-                            return <React.Fragment key={col.title}>
-                                <button className={`dropdown-item ${this.state.sortColumn === sortColumnName && this.state.sortOrder === 'asc' ? 'active' : ''}`} type="button" onClick={(e) => this.setSort(sortColumnName, 'asc')}>Ascending: {col.title}</button>
-                                <button className={`dropdown-item ${this.state.sortColumn === sortColumnName && this.state.sortOrder === 'desc' ? 'active' : ''}`} type="button" onClick={(e) => this.setSort(sortColumnName, 'desc')}>Descending: {col.title}</button>
-                            </React.Fragment>;
-                        })}
-                    </div>
+                <div className="btn-group">
+                    {pageSizeSelector}
+                    {sortingSelector}
                 </div>
-
             </div>}
             <div className="card-body">
                 <ErrorBoundary>
-                    <DetailsTableInternal {...this.props} sortColumn={this.state.sortColumn} sortOrder={this.state.sortOrder} />
+                    <DetailsTableInternal {...this.props} sortColumn={this.state.sortColumn} sortOrder={this.state.sortOrder} pageSize={this.state.pageSize} />
                 </ErrorBoundary>
             </div>
         </div>;
@@ -93,29 +124,30 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableIntenralProp
 
         this.state = {
             currentPage: 1,
-            totalPages: 1,
-            pageSize: 50
+            totalPages: 1
         }
     }
 
     componentDidMount() {
         this.setState({
             currentPage: 1,
-            totalPages: Math.floor(this.props.collection.length / this.state.pageSize) + 1
+            totalPages: Math.floor(this.props.collection.length / this.props.pageSize) + 1
         });
+    }
+
+    componentDidUpdate(prevProps: IDetailsTableIntenralProps, prevState: IDetailsTableInternalState) {
+        if (this.props.pageSize !== prevProps.pageSize) {
+            this.setState({
+                currentPage: 1,
+                totalPages: Math.floor(this.props.collection.length / this.props.pageSize) + 1
+            });
+        }
+
     }
 
     setActivePage = (page: number) => {
         this.setState({
             currentPage: page
-        });
-    }
-
-    setPageSize = (size: number) => {
-        this.setState({
-            pageSize: size,
-            totalPages: Math.floor(this.props.collection.length / size) + 1,
-            currentPage: 1
         });
     }
 
@@ -130,7 +162,7 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableIntenralProp
             else {
                 return a[this.props.sortColumn] > b[this.props.sortColumn] ? -1 : 1;
             }
-        }).slice((this.state.currentPage - 1) * this.state.pageSize, (this.state.pageSize * this.state.currentPage));
+        }).slice((this.state.currentPage - 1) * this.props.pageSize, (this.props.pageSize * this.state.currentPage));
 
         if (pageItems.length === 0)
             return null;
@@ -193,24 +225,9 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableIntenralProp
             </div>
         </React.Fragment>;
 
-        const pageSizeSelection: JSX.Element = this.props.collection.length <= 25 ? null : <React.Fragment>
-            <div className="d-flex justify-content-end">
-                <div className="form-group">
-                    <span className="align-middle mr-3">Page size:</span>
-                    <div className="btn-group btn-group-sm" role="group" aria-label="First group">
-                        <button type="button" onClick={(e) => { e.preventDefault(); this.setPageSize(25); }} className={`btn ${this.state.pageSize === 25 ? "btn-secondary" : "btn-outline-secondary"} btn-sm`}>25</button>
-                        <button type="button" onClick={(e) => { e.preventDefault(); this.setPageSize(50); }} className={`btn ${this.state.pageSize === 50 ? "btn-secondary" : "btn-outline-secondary"} btn-sm`}>50</button>
-                        <button type="button" onClick={(e) => { e.preventDefault(); this.setPageSize(100); }} className={`btn ${this.state.pageSize === 100 ? "btn-secondary" : "btn-outline-secondary"} btn-sm`}>100</button>
-                        <button type="button" onClick={(e) => { e.preventDefault(); this.setPageSize(250); }} className={`btn ${this.state.pageSize === 250 ? "btn-secondary" : "btn-outline-secondary"} btn-sm`}>250</button>
-                    </div>
-                </div>
-            </div>
-        </React.Fragment>;
-
 
         return (
             <React.Fragment>
-                {pageSizeSelection}
                 <table className="table" >
                     <thead>
                         {tableHeader}
