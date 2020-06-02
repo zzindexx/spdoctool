@@ -1,17 +1,12 @@
 import * as React from 'react';
+import { Route, Switch, useParams, useRouteMatch } from "react-router-dom";
 import { ISPConfig } from '../../../../types/state/IAppState';
-import { CardList } from '../../Shared/CardList/CardList';
-import { PageHeader } from '../../Shared/PageHeader/PageHeader';
-import { DetailsTable } from '../../Shared/DetailsTable/DetailsTable';
-import {
-    Switch,
-    Route,
-    useRouteMatch,
-    useParams
-} from "react-router-dom";
-import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
-import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
 import { ServiceAccount, ServiceAccountViewModel } from '../../../../types/state/ServiceAccount';
+import { CardList } from '../../Shared/CardList/CardList';
+import { DetailsTable } from '../../Shared/DetailsTable/DetailsTable';
+import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
+import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
+import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 
 export const ManagedAccountsCompact = (props: ISPConfig) => {
     return <CardList title="Managed accounts" headerLink="/managedaccounts" collection={props.managedAccounts} />;

@@ -1,16 +1,14 @@
 import * as React from 'react';
-import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 import { IFarmConfig, ISPConfig } from '../../../../types/state/IAppState';
-import { Link } from "react-router-dom";
-import { Card } from '../../Shared/Card/Card';
+import { PageHeader } from '../../Shared/PageHeader/PageHeader';
+import { ITableRow, SummaryTable } from '../../Shared/SummaryTable/SummaryTable';
+import { ApplicationPoolsCompact } from '../ApplicationPools/ApplicationPools';
+import { ContentDatabasesCompact } from '../ContentDatabases/ContentDatabases';
+import { FarmSolutionsCompact } from '../FarmSolutions/FarmSolutions';
+import { ManagedAccountsCompact } from '../ManagedAccounts/ManagedAccounts';
 import { ServersCompact } from '../Servers/Servers';
 import { ServiceApplicationsCompact } from '../ServiceApplications/ServiceApplications';
 import { WebApplicationsCompact } from '../WebApplications/WebApplications';
-import { FarmSolutionsCompact } from '../FarmSolutions/FarmSolutions';
-import { SummaryTable, ITableRow } from '../../Shared/SummaryTable/SummaryTable';
-import { ManagedAccountsCompact } from '../ManagedAccounts/ManagedAccounts';
-import { ApplicationPoolsCompact } from '../ApplicationPools/ApplicationPools';
-import { ContentDatabasesCompact } from '../ContentDatabases/ContentDatabases';
 
 interface IBasicInfoProps {
     farmConfig: IFarmConfig;

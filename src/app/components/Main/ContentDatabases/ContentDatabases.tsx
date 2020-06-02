@@ -1,14 +1,12 @@
 import * as React from 'react';
+import { Route, Switch, useParams, useRouteMatch } from "react-router-dom";
+import { ContentDatabase, ContentDatabaseViewModel } from '../../../../types/state/ContentDatabase';
 import { ISPConfig } from '../../../../types/state/IAppState';
 import { CardList } from '../../Shared/CardList/CardList';
-import { BrowserRouter as Router, Switch, Route, useRouteMatch, useParams } from "react-router-dom";
-import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 import { DetailsTable } from '../../Shared/DetailsTable/DetailsTable';
-import { WebApplication } from '../../../../types/state/WebApplication';
-import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
-import { ContentDatabase, ContentDatabaseViewModel } from '../../../../types/state/ContentDatabase';
-import { SiteCollection } from '../../../../types/state/SiteCollection';
+import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
+import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 
 export const ContentDatabasesCompact = (props: ISPConfig) => {
     return <CardList title="Content databases" headerLink="/contentdatabases" collection={props.contentDatabases} />;

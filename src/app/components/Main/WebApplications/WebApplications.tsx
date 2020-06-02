@@ -1,19 +1,15 @@
 import * as React from 'react';
-import { ISPConfig } from '../../../../types/state/IAppState';
-import { CardList } from '../../Shared/CardList/CardList';
-import { PageHeader } from '../../Shared/PageHeader/PageHeader';
-import { Card } from '../../Shared/Card/Card';
-import { DetailsTable, ITableColumn } from '../../Shared/DetailsTable/DetailsTable';
-import { BrowserRouter as Router, Switch, Route, useRouteMatch, useParams } from "react-router-dom";
-import { SummaryTable } from '../../Shared/SummaryTable/SummaryTable';
-import { WebApplication, WebApplicationViewModel } from '../../../../types/state/WebApplication';
-import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
-import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
+import { Route, Switch, useParams, useRouteMatch } from "react-router-dom";
 import { ContentDatabase } from '../../../../types/state/ContentDatabase';
-import { FarmSolution } from '../../../../types/state/FarmSolution';
-import { ApplicationPool } from '../../../../types/state/ApplicationPool';
-import { ServiceAccount } from '../../../../types/state/ServiceAccount';
+import { ISPConfig } from '../../../../types/state/IAppState';
 import { SiteCollection } from '../../../../types/state/SiteCollection';
+import { WebApplication, WebApplicationViewModel } from '../../../../types/state/WebApplication';
+import { CardList } from '../../Shared/CardList/CardList';
+import { DetailsTable, ITableColumn } from '../../Shared/DetailsTable/DetailsTable';
+import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
+import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
+import { PageHeader } from '../../Shared/PageHeader/PageHeader';
+import { SummaryTable } from '../../Shared/SummaryTable/SummaryTable';
 
 export const WebApplicationsCompact = (props: ISPConfig) => {
     return <CardList title="Web applications" headerLink="/webapplications" collection={props.webApplications} />;

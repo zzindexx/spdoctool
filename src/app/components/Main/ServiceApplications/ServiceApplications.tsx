@@ -1,13 +1,12 @@
 import * as React from 'react';
+import { Route, Switch, useParams, useRouteMatch } from "react-router-dom";
 import { ISPConfig } from '../../../../types/state/IAppState';
-import { PageHeader } from '../../Shared/PageHeader/PageHeader';
+import { ServiceApplication, ServiceApplicationViewModel } from '../../../../types/state/ServiceApplication';
 import { CardList } from '../../Shared/CardList/CardList';
 import { DetailsTable, ITableColumn } from '../../Shared/DetailsTable/DetailsTable';
-import { BrowserRouter as Router, Switch, Route, useRouteMatch, useParams } from "react-router-dom";
-import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
-import { ApplicationPool } from '../../../../types/state/ApplicationPool';
-import { ServiceApplication, ServiceApplicationViewModel } from '../../../../types/state/ServiceApplication';
+import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
+import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 
 export const ServiceApplicationsCompact = (props: ISPConfig) => {
     return <CardList title="Service applications" headerLink="/serviceapplications" collection={props.serviceApplications} />;

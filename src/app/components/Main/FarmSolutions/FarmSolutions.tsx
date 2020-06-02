@@ -1,15 +1,12 @@
 import * as React from 'react';
+import { Route, Switch, useParams, useRouteMatch } from "react-router-dom";
+import { FarmSolution, FarmSolutionViewModel } from '../../../../types/state/FarmSolution';
 import { ISPConfig } from '../../../../types/state/IAppState';
 import { CardList } from '../../Shared/CardList/CardList';
-import { PageHeader } from '../../Shared/PageHeader/PageHeader';
-import { Card } from '../../Shared/Card/Card';
 import { DetailsTable, ITableColumn } from '../../Shared/DetailsTable/DetailsTable';
-import { WebApplication } from '../../../../types/state/WebApplication';
-import { BrowserRouter as Router, Switch, Route, Link, useRouteMatch, useParams } from "react-router-dom";
-import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
-import { FarmSolution, FarmSolutionViewModel } from '../../../../types/state/FarmSolution';
-import { BasicEntity } from '../../../../types/state/BasicEntity';
+import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
+import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 
 export const FarmSolutions = (props: ISPConfig) => {
     let match = useRouteMatch();

@@ -1,14 +1,11 @@
 import * as React from 'react';
+import { Route, Switch, useParams, useRouteMatch } from "react-router-dom";
 import { ISPConfig } from '../../../../types/state/IAppState';
-import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
-import { BrowserRouter as Router, Switch, Route, Link, useRouteMatch, useParams } from "react-router-dom";
-import { PageHeader } from '../../Shared/PageHeader/PageHeader';
-import { DetailsTable } from '../../Shared/DetailsTable/DetailsTable';
-import { WebApplication } from '../../../../types/state/WebApplication';
-import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
-import { ServiceApplication } from '../../../../types/state/ServiceApplication';
-import { ServiceApplicationProxy } from '../../../../types/state/ServiceApplicationProxy';
 import { ServiceApplicationProxyGroup, ServiceApplicationProxyGroupViewModel } from '../../../../types/state/ServiceApplicationProxyGroup';
+import { DetailsTable } from '../../Shared/DetailsTable/DetailsTable';
+import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
+import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
+import { PageHeader } from '../../Shared/PageHeader/PageHeader';
 
 export const ProxyGroups = (props: ISPConfig) => {
     let match = useRouteMatch();
