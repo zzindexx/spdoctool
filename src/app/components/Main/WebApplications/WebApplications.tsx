@@ -34,19 +34,16 @@ const WebApplicationsTable = (props: ISPConfig) => {
             name: 'siteColNum',
             title: 'Number of site collections',
             sortable: true
+        },
+        {
+            name: 'totalSizeString',
+            title: 'Size of databases',
+            sortable: true,
+            sortPropertyName: 'totalSize'
         }
     ];
 
-    const collection: any[] = props.webApplications.map((webApplication: WebApplication) => {
-        const contentDatabases: string[] = props.contentDatabases.filter((cd: ContentDatabase) => cd.webApplicationId === webApplication.id).map((cd: ContentDatabase) => cd.id);
-        const siteColNum: number = props.siteCollections.filter((sc: SiteCollection) => contentDatabases.includes(sc.contentDatabaseId)).length;
-        return {
-            id: webApplication.id,
-            name: webApplication.name,
-            url: webApplication.url,
-            siteColNum: siteColNum
-        };
-    });
+    const collection: any[] = props.webApplications.map((webApplication: WebApplication) => webApplication.getViewModel(props));
 
     return (
         <React.Fragment>
