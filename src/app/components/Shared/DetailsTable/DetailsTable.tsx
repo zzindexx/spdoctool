@@ -17,33 +17,84 @@ interface IDetailsTableProps {
     collection: any[];
     columns: ITableColumn[];
 }
+interface IDetailsTableIntenralProps {
+    title: string;
+    collection: any[];
+    columns: ITableColumn[];
+    sortColumn: string;
+    sortOrder: 'asc' | 'desc';
+
+}
 
 interface IDetailsTableState {
-    currentPage: number;
-    totalPages: number;
-    pageSize: number;
     sortColumn: string;
     sortOrder: 'asc' | 'desc';
 }
 
-export const DetailsTable = (props: IDetailsTableProps) => {
-    return <Card title={props.title}>
-        <ErrorBoundary>
-            <DetailsTableInternal {...props} />
-        </ErrorBoundary>
-    </Card>;
+interface IDetailsTableInternalState {
+    currentPage: number;
+    totalPages: number;
+    pageSize: number;
 }
 
-class DetailsTableInternal extends React.PureComponent<IDetailsTableProps, IDetailsTableState> {
+export class DetailsTable extends React.PureComponent<IDetailsTableProps, IDetailsTableState> {
     constructor(props: IDetailsTableProps) {
+        super(props);
+
+        this.state = {
+            sortColumn: 'name',
+            sortOrder: 'asc'
+        }
+    }
+
+    setSort = (sortColumn: string, sortOrder: 'asc' | 'desc') => {
+        this.setState({
+            sortColumn: sortColumn,
+            sortOrder: sortOrder
+        });
+    }
+
+    render() {
+        return <div className="card">
+            {this.props.title.length > 0 && <div className="card-header-tab card-header d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center">
+                <div>
+                    {this.props.title}
+                </div>
+                <div className="dropdown">
+                    <button className="btn btn-light dropdown-toggle btn-sm" type="button" id="sortDropDownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i className="fas fa-align-right mr-1">
+                        </i>
+                        Sorting
+                    </button>
+                    <div className="dropdown-menu dropdown-menu-right" aria-labelledby="sortDropDownMenu">
+                        {this.props.columns.filter((col: ITableColumn) => col.sortable).map((col: ITableColumn) => {
+                            const sortColumnName: string = col.sortPropertyName ? col.sortPropertyName : col.name;
+                            return <React.Fragment key={col.title}>
+                                <button className={`dropdown-item ${this.state.sortColumn === sortColumnName && this.state.sortOrder === 'asc' ? 'active' : ''}`} type="button" onClick={(e) => this.setSort(sortColumnName, 'asc')}>Ascending: {col.title}</button>
+                                <button className={`dropdown-item ${this.state.sortColumn === sortColumnName && this.state.sortOrder === 'desc' ? 'active' : ''}`} type="button" onClick={(e) => this.setSort(sortColumnName, 'desc')}>Descending: {col.title}</button>
+                            </React.Fragment>;
+                        })}
+                    </div>
+                </div>
+
+            </div>}
+            <div className="card-body">
+                <ErrorBoundary>
+                    <DetailsTableInternal {...this.props} sortColumn={this.state.sortColumn} sortOrder={this.state.sortOrder} />
+                </ErrorBoundary>
+            </div>
+        </div>;
+    }
+}
+
+class DetailsTableInternal extends React.PureComponent<IDetailsTableIntenralProps, IDetailsTableInternalState> {
+    constructor(props: IDetailsTableIntenralProps) {
         super(props);
 
         this.state = {
             currentPage: 1,
             totalPages: 1,
-            pageSize: 50,
-            sortColumn: 'name',
-            sortOrder: 'asc'
+            pageSize: 50
         }
     }
 
@@ -68,33 +119,19 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableProps, IDeta
         });
     }
 
-    setSort = (col: ITableColumn) => {
-        if (this.state.sortColumn === col.name || this.state.sortColumn === col.sortPropertyName) {
-            this.setState({
-                sortOrder: this.state.sortOrder === 'asc' ? 'desc' : 'asc'
-            });
-        } else {
-            this.setState({
-                sortColumn: col.sortPropertyName ? col.sortPropertyName : col.name,
-                sortOrder: 'asc'
-            });
-        }
-        
-    }
-
     render() {
         if (this.props.collection.length === 0 || this.props.columns.length === 0)
             return null;
 
         const pageItems: any[] = this.props.collection.sort((a: any, b: any) => {
-            if (this.state.sortOrder === 'asc') {
-                return a[this.state.sortColumn] > b[this.state.sortColumn] ? 1 : -1;
+            if (this.props.sortOrder === 'asc') {
+                return a[this.props.sortColumn] > b[this.props.sortColumn] ? 1 : -1;
             }
             else {
-                return a[this.state.sortColumn] > b[this.state.sortColumn] ? -1 : 1;
+                return a[this.props.sortColumn] > b[this.props.sortColumn] ? -1 : 1;
             }
         }).slice((this.state.currentPage - 1) * this.state.pageSize, (this.state.pageSize * this.state.currentPage));
-        
+
         if (pageItems.length === 0)
             return null;
 
@@ -103,13 +140,6 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableProps, IDeta
             {
                 this.props.columns.map((col: ITableColumn) => <th scope="col" key={col.name}>
                     {col.title}
-                    {
-                        typeof (col.sortable) !== undefined && col.sortable && <span className="ml-3">
-                            {(this.state.sortColumn === col.name || this.state.sortColumn === col.sortPropertyName) && this.state.sortOrder === 'asc' && <a href='#' onClick={(e) => { e.preventDefault(); this.setSort(col) }}><i className="fas fa-sort-alpha-up"></i></a>}
-                            {(this.state.sortColumn === col.name || this.state.sortColumn === col.sortPropertyName) && this.state.sortOrder === 'desc' && <a href='#' onClick={(e) => { e.preventDefault(); this.setSort(col) }}><i className="fas fa-sort-alpha-down"></i></a>}
-                            {(this.state.sortColumn !== col.name && this.state.sortColumn !== col.sortPropertyName) && <a href='#' onClick={(e) => { e.preventDefault(); this.setSort(col) }}><i className="fas fa-sort-alpha-up text-secondary"></i></a>}
-                        </span>
-                    }
                 </th>)
             }
         </tr>;
