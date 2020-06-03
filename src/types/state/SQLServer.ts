@@ -11,8 +11,6 @@ export class SQLServer extends BasicEntity {
     constructor(props: any) {
         super(props);
 
-        this.id = props.id;
-        this.name = props.name;
         this.ipaddresses = props.ipaddresses;
         this.sqlname = props.sqlname;
         this.isAlias = props.isAlias;
