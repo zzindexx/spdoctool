@@ -32,7 +32,7 @@ export const SQLServersTable = (props: ISQLConfig) => {
         <React.Fragment>
             <DetailsTable title="Servers" collection={props.servers} columns={[
                 { name: 'name', title: 'Server name', linkPath: '/sqlconfig' },
-                { name: 'ipaddresses', title: 'IP Address' },
+                { name: 'ipaddressesString', title: 'IP Address' },
                 { name: 'databaseCount', title: 'Number of databases', sortable: true}
             ]} />
         </React.Fragment>

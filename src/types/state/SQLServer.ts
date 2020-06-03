@@ -22,4 +22,8 @@ export class SQLServer extends BasicEntity {
     public get databaseCount(): number {
         return this.databases.length;
     }
-}
+
+    public get ipaddressesString(): string {
+        return this.ipaddresses.join(', ');
+    }
+ }
