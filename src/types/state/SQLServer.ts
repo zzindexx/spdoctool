@@ -18,4 +18,8 @@ export class SQLServer extends BasicEntity {
         this.nodes = props.nodes;
         this.databases = props.databases;
     }
+
+    public get databaseCount(): number {
+        return this.databases.length;
+    }
 }
