@@ -44,7 +44,7 @@ export class WebApplication extends BasicEntity {
         const contentDatabases = spConfig.contentDatabases.filter((cd: ContentDatabase) => cd.webApplicationId === this.id).map((cd: ContentDatabase) => cd.getViewModel(spConfig));
         const siteCollections = spConfig.siteCollections.filter((sc: SiteCollection) => contentDatabases.map((cd: ContentDatabaseViewModel) => cd.id).includes(sc.contentDatabaseId)).map((sc: SiteCollection) => sc.getViewModel(spConfig))
         const applicationPool = spConfig.webApplicationPools.find((wap: ApplicationPool) => wap.id === this.applicationPoolId).getViewModel(spConfig);
-        const totalSize: number = contentDatabases.map((cd: ContentDatabaseViewModel) => cd.size).reduce((totalSize, dbSize) => totalSize + dbSize);
+        const totalSize: number = contentDatabases.length > 0 ? contentDatabases.map((cd: ContentDatabaseViewModel) => cd.size).reduce((totalSize, dbSize) => totalSize + dbSize) : 0;
         return {
             id: this.id,
             name: this.name,

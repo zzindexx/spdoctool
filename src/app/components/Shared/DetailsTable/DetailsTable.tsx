@@ -194,7 +194,7 @@ class DetailsTableInternal extends React.PureComponent<IDetailsTableIntenralProp
                         case 'object':
                             if (Array.isArray(itemCellValue)) {
                                 itemCellValueElement = <React.Fragment>
-                                    {(itemCellValue as Array<any>).length > 0 && (itemCellValue as Array<any>).map((v: any) => <div key={v} className="row"><div className="col">{v}</div></div>)}
+                                    {(itemCellValue as Array<any>).length > 0 && (itemCellValue as Array<any>).map((v: any) => <div key={v.id} className="row"><div className="col">{v.name}</div></div>)}
                                 </React.Fragment>;
                             } else {
                                 itemCellValueElement = col.linkPath ? <Link to={`${col.linkPath}/${itemCellValue.id}`}>{itemCellValue.name}</Link> : <React.Fragment>{itemCellValue.name}</React.Fragment>;

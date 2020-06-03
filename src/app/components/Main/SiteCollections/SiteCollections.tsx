@@ -31,7 +31,9 @@ export const SiteCollectionsTable = (props: ISPConfig) => {
             <DetailsTable title="Site collections" collection={collection} columns={[
                 { name: 'url', title: 'Url',  linkPath: '/sitecollections', sortable: true },
                 { name: 'contentDatabase', title: 'Content database', linkPath: '/contentdatabases', sortable: true },
-                { name: 'sizeString', title: 'Size', sortable: true, sortPropertyName: 'size' }
+                { name: 'sizeString', title: 'Size', sortable: true, sortPropertyName: 'size' },
+                { name: 'owner', title: 'Owner' },
+                { name: 'siteTemplate', title: 'Template' }
             ]} />
         </React.Fragment>
     );
@@ -53,6 +55,9 @@ export const SiteCollectionsDetails = (props: ISPConfig) => {
                     { rowTitle: 'Site collection name', rowProperty: 'name' },
                     { rowTitle: 'Url', rowProperty: 'url' },
                     { rowTitle: 'Size', rowProperty: 'sizeString' },
+                    { rowTitle: 'Owner', rowProperty: 'owner'  },
+                    { rowTitle: 'Template', rowProperty: 'siteTemplate' },
+                    { rowTitle: 'Compatibility level', rowProperty: 'compatibilityLevel' },
                     { rowTitle: 'Content database', rowProperty: 'contentDatabase', linkUrl: '/contentdatabases/{id}' },
                     { rowTitle: 'Web application', rowProperty: 'webApplication', linkUrl: '/webapplications/{id}' }
                 ]}

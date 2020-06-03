@@ -6,6 +6,7 @@ import { DetailsTable } from '../../Shared/DetailsTable/DetailsTable';
 import { ErrorBoundary } from '../../Shared/ErrorBoundary/ErrorBoundary';
 import { ObjectDetails } from '../../Shared/ObjectDetails/ObjectDetails';
 import { PageHeader } from '../../Shared/PageHeader/PageHeader';
+import { CardList } from '../../Shared/CardList/CardList';
 
 export const ProxyGroups = (props: ISPConfig) => {
     let match = useRouteMatch();
@@ -30,7 +31,7 @@ export const ProxyGroupsTable = (props: ISPConfig) => {
     const proxyGroupsViewModel: ServiceApplicationProxyGroupViewModel[] = props.serviceApplicationProxyGroups.map((pg: ServiceApplicationProxyGroup) => pg.getViewModel(props));
 
     return <React.Fragment>
-        <DetailsTable title="List of content databases" collection={proxyGroupsViewModel} columns={[
+        <DetailsTable title="List of proxy groups" collection={proxyGroupsViewModel} columns={[
             { name: 'name', title: 'Proxy group name', linkPath: '/proxygroups', sortable: true },
             { name: 'numberOfProxies', title: 'Number of proxies', sortable: true },
             { name: 'webApplications', title: 'Web applications', linkPath: '/webapplications' }
@@ -59,6 +60,9 @@ export const ProxyGroupsDetails = (props: ISPConfig) => {
                     { name: 'name', title: 'Service Application', linkPath:'/serviceapplications' },
                     { name: 'proxyName', title: 'Service Application Proxy' }
                 ]} />
+            </div>
+            <div className="col">
+                <CardList collection={proxyGroup.webApplications} title="Web applications" />
             </div>
         </div>
     </React.Fragment>;

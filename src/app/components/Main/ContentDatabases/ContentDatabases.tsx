@@ -46,8 +46,10 @@ export const ContentDatabasesDetails = (props: ISPConfig) => {
         <div className="row">
             <div className="col">
                 <DetailsTable title="Site collections in database" collection={contentDatabaseViewModel.siteCollections} columns={[
-                    { name: 'url', title: 'URL', linkPath: '/sitecollections' },
-                    { name: 'sizeString', title: 'Size' }
+                    { name: 'url', title: 'Url',  linkPath: '/sitecollections', sortable: true },
+                    { name: 'sizeString', title: 'Size', sortable: true, sortPropertyName: 'size' },
+                    { name: 'owner', title: 'Owner' },
+                    { name: 'siteTemplate', title: 'Template' }
                 ]} />
             </div>
         </div>

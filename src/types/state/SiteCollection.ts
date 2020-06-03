@@ -8,6 +8,11 @@ export class SiteCollection extends BasicEntity {
     url: string;
     size: number;
     contentDatabaseId: string;
+    owner: string;
+    ownerLoginName: string;
+    compatibilityLevel: number;
+    siteTemplate: string;
+
 
     constructor(props: any) {
         super(props);
@@ -15,6 +20,9 @@ export class SiteCollection extends BasicEntity {
         this.url = props.url;
         this.size = props.size;
         this.contentDatabaseId = props.contentDatabaseId;
+        this.owner = props.owner;
+        this.compatibilityLevel = props.compatibilityLevel;
+        this.siteTemplate = props.siteTemplate;
     }
 
     public get sizeString(): string {
@@ -30,7 +38,11 @@ export class SiteCollection extends BasicEntity {
             size: this.size,
             sizeString: this.sizeString,
             contentDatabase: contentDatabase,
-            webApplication: contentDatabase.getViewModel(spConfig).webApplication
+            webApplication: contentDatabase.getViewModel(spConfig).webApplication,
+            owner: this.owner,
+            ownerLoginName: this.ownerLoginName,
+            compatibilityLevel: this.compatibilityLevel,
+            siteTemplate: this.siteTemplate
         };
     }
 }
@@ -43,4 +55,8 @@ export class SiteCollectionViewModel {
     sizeString: string;
     contentDatabase: ContentDatabase;
     webApplication: WebApplication;
+    owner: string;
+    ownerLoginName: string;
+    compatibilityLevel: number;
+    siteTemplate: string;
 }

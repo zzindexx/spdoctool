@@ -159,10 +159,12 @@ const WebApplicationSiteCollections = (props: ISPConfig) => {
         <Link to={`/webapplications/${webApp.id}`}>
             <i className="fas fa-arrow-left mr-1"></i> {webApp.name}
         </Link>
-        <DetailsTable title="List of content databases" collection={webApp.siteCollections} columns={[
+        <DetailsTable title="List of site collections in web application" collection={webApp.siteCollections} columns={[
             { name: 'url', title: 'Url',  linkPath: '/sitecollections', sortable: true },
             { name: 'contentDatabase', title: 'Content database', linkPath: '/contentdatabases', sortable: true },
-            { name: 'sizeString', title: 'Size', sortable: true, sortPropertyName: 'size' }
+            { name: 'sizeString', title: 'Size', sortable: true, sortPropertyName: 'size' },
+            { name: 'owner', title: 'Owner' },
+            { name: 'siteTemplate', title: 'Template' }
         ]} />
     </React.Fragment>;
 }
